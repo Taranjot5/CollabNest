@@ -1,1 +1,65 @@
-<p>shared-notes works!</p>
+<div class="shared-page">
+
+  <h1 class="page-title">
+    Shared Notes
+  </h1>
+
+  <div
+    class="notes-grid"
+    *ngIf="sharedNotes.length > 0">
+
+    <div
+      class="note-card"
+      *ngFor="let note of sharedNotes">
+
+      <div class="top-row">
+
+        <span class="category">
+          {{ note.category }}
+        </span>
+
+        <span class="priority">
+          {{ note.priority }}
+        </span>
+
+      </div>
+
+      <h2>
+        {{ note.title }}
+      </h2>
+
+      <div
+        class="note-preview"
+        [innerHTML]="note.content">
+      </div>
+
+      <div class="shared-info">
+
+        <small>
+          Shared with you
+        </small>
+
+      </div>
+
+      <div class="footer">
+
+        <small>
+          Updated:
+          {{ note.updatedAt | date:'medium' }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div
+    class="empty-state"
+    *ngIf="sharedNotes.length === 0">
+
+    No shared notes found.
+
+  </div>
+
+</div>

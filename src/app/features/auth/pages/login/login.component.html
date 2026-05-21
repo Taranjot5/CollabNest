@@ -1,51 +1,153 @@
-<div class="auth-container">
+<div class="login-page">
 
-  <mat-card>
+  <!-- LEFT SIDE -->
 
-    <h2>Login</h2>
+  <div class="login-left">
 
-    <form [formGroup]="loginForm">
+    <div class="branding">
 
-      <mat-form-field appearance="outline">
-        <mat-label>Email</mat-label>
+      <h1>
+        Knowledge Hub
+      </h1>
 
-        <input
-          matInput
-          type="email"
-          formControlName="email">
-      </mat-form-field>
+      <p>
+        Organize your notes, collaborate with teams,
+        and manage knowledge smarter.
+      </p>
 
-      <mat-form-field appearance="outline">
-        <mat-label>Password</mat-label>
+    </div>
 
-        <input
-          matInput
-          type="password"
-          formControlName="password">
-      </mat-form-field>
+  </div>
 
-      <button
-        mat-raised-button
-        color="primary"
-        (click)="onLogin()">
+  <!-- RIGHT SIDE -->
 
-        Login
-      </button>
+  <div class="login-right">
 
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="loginWithGoogle()">
+    <mat-card class="login-card">
 
-        Login with Google
-      </button>
+      <h2>
+        Welcome Back
+      </h2>
 
-    </form>
+      <p class="subtitle">
+        Login to continue
+      </p>
 
-    <p class="error">
-      {{ errorMessage }}
-    </p>
+      <form
+        [formGroup]="loginForm"
+        class="login-form">
 
-  </mat-card>
+        <!-- EMAIL -->
+
+        <mat-form-field
+          appearance="outline">
+
+          <mat-label>
+            Email
+          </mat-label>
+
+          <input
+            matInput
+            type="email"
+            formControlName="email">
+
+          <mat-icon matSuffix>
+            email
+          </mat-icon>
+
+        </mat-form-field>
+
+        <!-- PASSWORD -->
+
+        <mat-form-field
+          appearance="outline">
+
+          <mat-label>
+            Password
+          </mat-label>
+
+          <input
+            matInput
+            type="password"
+            formControlName="password">
+
+          <mat-icon matSuffix>
+            lock
+          </mat-icon>
+
+        </mat-form-field>
+
+        <!-- LOGIN BUTTON -->
+
+        <button
+          mat-raised-button
+          color="primary"
+          class="login-btn"
+          (click)="onLogin()"
+          [disabled]="loading">
+
+          {{
+            loading
+            ? 'Logging in...'
+            : 'Login'
+          }}
+
+        </button>
+
+        <!-- DIVIDER -->
+
+        <div class="divider">
+
+          <span>
+            OR
+          </span>
+
+        </div>
+
+        <!-- GOOGLE LOGIN -->
+
+        <button
+          mat-stroked-button
+          type="button"
+          class="google-btn"
+          (click)="loginWithGoogle()">
+
+          <img
+            src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png"
+            alt="google">
+
+          Continue with Google
+
+        </button>
+
+      </form>
+
+      <!-- ERROR -->
+
+      <p
+        class="error"
+        *ngIf="errorMessage">
+
+        {{ errorMessage }}
+
+      </p>
+
+      <!-- REGISTER -->
+
+      <p class="register-link">
+
+        Don't have an account?
+
+        <a routerLink="/auth/register">
+
+          Create Account
+
+        </a>
+
+      </p>
+
+    </mat-card>
+
+  </div>
 
 </div>

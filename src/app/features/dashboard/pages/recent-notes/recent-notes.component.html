@@ -1,1 +1,57 @@
-<p>recent-notes works!</p>
+<div class="recent-page">
+
+  <h1 class="page-title">
+    Recent Notes
+  </h1>
+
+  <div
+    class="notes-grid"
+    *ngIf="recentNotes.length > 0">
+
+    <div
+      class="note-card"
+      *ngFor="let note of recentNotes">
+
+      <div class="note-top">
+
+        <span class="category">
+          {{ note.category }}
+        </span>
+
+        <span class="priority">
+          {{ note.priority }}
+        </span>
+
+      </div>
+
+      <h2>
+        {{ note.title }}
+      </h2>
+
+      <div
+        class="note-preview"
+        [innerHTML]="note.content">
+      </div>
+
+      <div class="note-footer">
+
+        <small>
+          Updated:
+          {{ note.updatedAt | date:'medium' }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <div
+    class="empty-state"
+    *ngIf="recentNotes.length === 0">
+
+    No recent notes found.
+
+  </div>
+
+</div>

@@ -1,0 +1,58 @@
+<div class="register-container">
+
+  <div class="register-card">
+
+    <h1>
+      Create Account
+    </h1>
+
+    <input
+      type="text"
+      placeholder="Full Name"
+      [(ngModel)]="name">
+
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="email">
+
+    <input
+      type="password"
+      placeholder="Password"
+      [(ngModel)]="password">
+
+    <button
+      (click)="register()"
+      [disabled]="loading">
+
+      {{
+        loading
+        ? 'Creating Account...'
+        : 'Register'
+      }}
+
+    </button>
+
+    <p
+      class="error"
+      *ngIf="errorMessage">
+
+      {{ errorMessage }}
+
+    </p>
+
+    <p class="login-link">
+
+      Already have an account?
+
+      <a routerLink="/auth/login">
+
+        Login
+
+      </a>
+
+    </p>
+
+  </div>
+
+</div>
