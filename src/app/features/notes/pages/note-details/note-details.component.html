@@ -1,0 +1,16 @@
+<div class="note-details" *ngIf="note">
+
+  <input
+    type="text"
+    [(ngModel)]="note.title"
+    placeholder="Note title">
+
+  <quill-editor
+    [(ngModel)]="note.content">
+  </quill-editor>
+
+  <button (click)="saveNote()">
+    Save
+  </button>
+
+</div>

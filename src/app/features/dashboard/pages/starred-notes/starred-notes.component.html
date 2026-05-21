@@ -1,0 +1,49 @@
+<h1 class="page-title">
+  ⭐ Starred Notes
+</h1>
+
+<div
+  class="notes-container"
+
+  *ngIf="starredNotes.length > 0">
+
+  <div
+    class="note-card"
+
+    *ngFor="let note of starredNotes"
+
+    (click)="openNote(note.id)">
+
+    <div class="top-row">
+
+      <span class="category">
+        {{ note.category }}
+      </span>
+
+      <span class="priority">
+        {{ note.priority }}
+      </span>
+
+    </div>
+
+    <h3>
+      {{ note.title }}
+    </h3>
+
+    <div
+      class="note-preview"
+
+      [innerHTML]="note.content">
+    </div>
+
+  </div>
+
+</div>
+
+<div
+  class="empty-state"
+
+  *ngIf="starredNotes.length === 0">
+
+  No starred notes yet.
+</div>

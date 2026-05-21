@@ -1,0 +1,218 @@
+<mat-sidenav-container class="layout-container">
+
+  <!-- =========================
+       SIDEBAR
+  ========================== -->
+
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    opened
+    class="sidebar">
+
+    <!-- LOGO -->
+
+    <div class="logo-section">
+
+      <mat-icon class="logo-icon">
+        auto_stories
+      </mat-icon>
+
+      <h2>
+        Knowledge Hub
+      </h2>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <!-- NAVIGATION -->
+
+    <nav class="nav-links">
+
+      <!-- DASHBOARD -->
+
+      <a
+        mat-button
+        routerLink="/workspace"
+        routerLinkActive="active-link">
+
+        <mat-icon>
+          dashboard
+        </mat-icon>
+
+        <span>
+          Dashboard
+        </span>
+
+      </a>
+
+      <!-- NOTES -->
+
+      <a
+        mat-button
+        routerLink="/notes"
+        routerLinkActive="active-link">
+
+        <mat-icon>
+          description
+        </mat-icon>
+
+        <span>
+          Notes
+        </span>
+
+      </a>
+
+      <!-- STARRED NOTES -->
+
+      <a
+        mat-button
+        routerLink="/workspace/starred"
+        routerLinkActive="active-link">
+
+        <mat-icon>
+          star
+        </mat-icon>
+
+        <span>
+          Starred Notes
+        </span>
+
+      </a>
+
+      <!-- SHARED NOTES -->
+
+      <a
+        mat-button
+        routerLink="/workspace/shared"
+        routerLinkActive="active-link">
+
+        <mat-icon>
+          groups
+        </mat-icon>
+
+        <span>
+          Shared Notes
+        </span>
+
+      </a>
+
+      <!-- RECENT NOTES -->
+
+      <a
+        mat-button
+        routerLink="/workspace/recent"
+        routerLinkActive="active-link">
+
+        <mat-icon>
+          history
+        </mat-icon>
+
+        <span>
+          Recent Notes
+        </span>
+
+      </a>
+
+    </nav>
+
+    <!-- FOOTER -->
+
+    <div class="sidebar-footer">
+
+      <button
+        mat-raised-button
+        color="warn"
+        (click)="logout()">
+
+        <mat-icon>
+          logout
+        </mat-icon>
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </mat-sidenav>
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+
+  <mat-sidenav-content>
+
+    <!-- TOPBAR -->
+
+    <mat-toolbar class="topbar">
+
+      <!-- MOBILE MENU -->
+
+      <button
+        mat-icon-button
+        class="mobile-menu-btn"
+        (click)="sidenav.toggle()">
+
+        <mat-icon>
+          menu
+        </mat-icon>
+
+      </button>
+
+      <!-- TITLE -->
+
+      <span class="topbar-title">
+        Knowledge Hub
+      </span>
+
+      <span class="spacer"></span>
+
+      <!-- SEARCH -->
+
+      <div class="topbar-search">
+
+        <mat-icon>
+          search
+        </mat-icon>
+
+        <input
+          type="text"
+          placeholder="Search notes..." />
+
+      </div>
+
+      <!-- NOTIFICATIONS -->
+
+      <button mat-icon-button>
+
+        <mat-icon>
+          notifications
+        </mat-icon>
+
+      </button>
+
+      <!-- PROFILE -->
+
+      <button mat-icon-button>
+
+        <mat-icon>
+          account_circle
+        </mat-icon>
+
+      </button>
+
+    </mat-toolbar>
+
+    <!-- PAGE CONTENT -->
+
+    <div class="page-content">
+
+      <router-outlet></router-outlet>
+
+    </div>
+
+  </mat-sidenav-content>
+
+</mat-sidenav-container>
