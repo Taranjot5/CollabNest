@@ -1,0 +1,96 @@
+<div class="notifications-page">
+
+  <h1 class="page-title">
+    Notifications
+  </h1>
+
+  <!-- LOADING -->
+
+  <div
+    class="empty-state"
+    *ngIf="loading">
+
+    Loading notifications...
+
+  </div>
+
+  <!-- EMPTY -->
+
+  <div
+    class="empty-state"
+    *ngIf="!loading && notifications.length === 0">
+
+    No notifications yet.
+
+  </div>
+
+  <!-- NOTIFICATIONS -->
+
+  <div
+    class="notifications-container"
+
+    *ngIf="notifications.length > 0">
+
+    <div
+      class="notification-card"
+
+      *ngFor="let notification of notifications"
+
+      [class.unread]="!notification.read">
+
+      <!-- TOP -->
+
+      <div class="notification-top">
+
+        <h3>
+
+          {{ notification.title }}
+
+        </h3>
+
+        <span class="time">
+
+          {{
+            notification.createdAt
+            | date:'short'
+          }}
+
+        </span>
+
+      </div>
+
+      <!-- MESSAGE -->
+
+      <p class="message">
+
+        {{ notification.message }}
+
+      </p>
+
+      <!-- ACTIONS -->
+
+      <div class="actions">
+
+        <button
+          *ngIf="!notification.read"
+
+          (click)="markAsRead(notification.id)">
+
+          Mark as Read
+        </button>
+
+        <button
+          class="delete-btn"
+
+          (click)="deleteNotification(notification.id)">
+
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

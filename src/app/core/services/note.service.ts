@@ -23,6 +23,7 @@ import { Note } from '../../features/notes/models/note.model';
 @Injectable({
   providedIn: 'root'
 })
+
 export class NoteService {
 
   constructor(
@@ -46,21 +47,26 @@ export class NoteService {
 
         return this.firestore
           .collection<Note>('notes', ref =>
+
             ref
               .where(
                 'participants',
                 'array-contains',
                 user.uid
               )
+
               .orderBy(
                 'updatedAt',
                 'desc'
               )
           )
+
           .snapshotChanges()
+
           .pipe(
 
             map(actions =>
+
               actions.map(a => {
 
                 const data =
@@ -74,6 +80,14 @@ export class NoteService {
                   ...data
                 };
               })
+            ),
+
+            map(notes =>
+
+              notes.filter(note =>
+
+                !note.isTrashed
+              )
             )
           );
       })
@@ -105,6 +119,7 @@ export class NoteService {
       priority,
 
       createdAt: Date.now(),
+
       updatedAt: Date.now(),
 
       createdBy: user.uid,
@@ -113,7 +128,11 @@ export class NoteService {
 
       collaborators: [],
 
-      starredBy: []
+      starredBy: [],
+
+      isTrashed: false,
+
+      trashedAt: 0
     };
 
     return this.firestore
@@ -154,10 +173,107 @@ export class NoteService {
   }
 
   // =========================
-  // DELETE NOTE
+  // MOVE NOTE TO TRASH
   // =========================
 
   deleteNote(id: string) {
+
+    return this.firestore
+      .collection('notes')
+      .doc(id)
+      .update({
+
+        isTrashed: true,
+
+        trashedAt: Date.now()
+      });
+  }
+
+  // =========================
+  // GET TRASH NOTES
+  // =========================
+
+  getTrashNotes(): Observable<Note[]> {
+
+    return this.afAuth.authState.pipe(
+
+      switchMap(user => {
+
+        if (!user) {
+          return of([]);
+        }
+
+        return this.firestore
+          .collection<Note>('notes', ref =>
+
+            ref
+              .where(
+                'participants',
+                'array-contains',
+                user.uid
+              )
+
+              .orderBy(
+                'updatedAt',
+                'desc'
+              )
+          )
+
+          .snapshotChanges()
+
+          .pipe(
+
+            map(actions =>
+
+              actions.map(a => {
+
+                const data =
+                  a.payload.doc.data() as Note;
+
+                const id =
+                  a.payload.doc.id;
+
+                return {
+                  id,
+                  ...data
+                };
+              })
+            ),
+
+            map(notes =>
+
+              notes.filter(note =>
+
+                note.isTrashed
+              )
+            )
+          );
+      })
+    );
+  }
+
+  // =========================
+  // RESTORE NOTE
+  // =========================
+
+  restoreNote(id: string) {
+
+    return this.firestore
+      .collection('notes')
+      .doc(id)
+      .update({
+
+        isTrashed: false,
+
+        trashedAt: 0
+      });
+  }
+
+  // =========================
+  // DELETE FOREVER
+  // =========================
+
+  deleteForever(id: string) {
 
     return this.firestore
       .collection('notes')
@@ -177,7 +293,9 @@ export class NoteService {
     const usersRef =
       this.firestore.collection(
         'users',
+
         ref =>
+
           ref.where(
             'email',
             '==',
@@ -242,12 +360,12 @@ export class NoteService {
         starredBy: isStarred
 
           ? firebase.firestore.FieldValue.arrayRemove(
-            user.uid
-          )
+              user.uid
+            )
 
           : firebase.firestore.FieldValue.arrayUnion(
-            user.uid
-          )
+              user.uid
+            )
       });
   }
 
@@ -267,21 +385,26 @@ export class NoteService {
 
         return this.firestore
           .collection<Note>('notes', ref =>
+
             ref
               .where(
                 'participants',
                 'array-contains',
                 user.uid
               )
+
               .orderBy(
                 'updatedAt',
                 'desc'
               )
           )
+
           .snapshotChanges()
+
           .pipe(
 
             map(actions =>
+
               actions
                 .map(a => {
 
@@ -298,7 +421,14 @@ export class NoteService {
                 })
 
                 .filter(note =>
-                  note.starredBy?.includes(user.uid)
+
+                  note.starredBy?.includes(
+                    user.uid
+                  )
+
+                  &&
+
+                  !note.isTrashed
                 )
             )
           );

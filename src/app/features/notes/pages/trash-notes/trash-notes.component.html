@@ -1,0 +1,43 @@
+<h1 class="page-title">
+  Trash Notes
+</h1>
+
+<div class="notes-container">
+
+  <div
+    class="note-card"
+    *ngFor="let note of trashedNotes">
+
+    <h3>
+      {{ note.title }}
+    </h3>
+
+    <div
+      class="note-preview"
+      [innerHTML]="note.content">
+
+    </div>
+
+    <div class="actions">
+
+      <button
+        class="restore-btn"
+        (click)="restoreNote(note.id)">
+
+        Restore
+
+      </button>
+
+      <button
+        class="delete-btn"
+        (click)="deleteForever(note.id)">
+
+        Delete Forever
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

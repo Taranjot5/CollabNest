@@ -13,6 +13,7 @@ import { NoteEditorComponent } from './pages/notes-editor/notes-editor.component
 import { NoteDetailsComponent } from './pages/note-details/note-details.component';
 
 import { QuillModule } from 'ngx-quill';
+import { TrashNotesComponent } from './pages/trash-notes/trash-notes.component';
 
 @NgModule({
 
@@ -22,7 +23,8 @@ import { QuillModule } from 'ngx-quill';
 
     NoteEditorComponent,
 
-    NoteDetailsComponent
+    NoteDetailsComponent,
+     TrashNotesComponent
   ],
 
   imports: [

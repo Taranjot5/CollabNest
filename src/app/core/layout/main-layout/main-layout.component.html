@@ -4,11 +4,7 @@
        SIDEBAR
   ========================== -->
 
-  <mat-sidenav
-    #sidenav
-    mode="side"
-    opened
-    class="sidebar">
+  <mat-sidenav #sidenav mode="side" opened class="sidebar">
 
     <!-- LOGO -->
 
@@ -32,10 +28,7 @@
 
       <!-- DASHBOARD -->
 
-      <a
-        mat-button
-        routerLink="/workspace"
-        routerLinkActive="active-link">
+      <a mat-button routerLink="/workspace" routerLinkActive="active-link">
 
         <mat-icon>
           dashboard
@@ -49,10 +42,7 @@
 
       <!-- NOTES -->
 
-      <a
-        mat-button
-        routerLink="/notes"
-        routerLinkActive="active-link">
+      <a mat-button routerLink="/notes" routerLinkActive="active-link">
 
         <mat-icon>
           description
@@ -66,10 +56,7 @@
 
       <!-- STARRED NOTES -->
 
-      <a
-        mat-button
-        routerLink="/workspace/starred"
-        routerLinkActive="active-link">
+      <a mat-button routerLink="/workspace/starred" routerLinkActive="active-link">
 
         <mat-icon>
           star
@@ -83,10 +70,7 @@
 
       <!-- SHARED NOTES -->
 
-      <a
-        mat-button
-        routerLink="/workspace/shared"
-        routerLinkActive="active-link">
+      <a mat-button routerLink="/workspace/shared" routerLinkActive="active-link">
 
         <mat-icon>
           groups
@@ -100,10 +84,7 @@
 
       <!-- RECENT NOTES -->
 
-      <a
-        mat-button
-        routerLink="/workspace/recent"
-        routerLinkActive="active-link">
+      <a mat-button routerLink="/workspace/recent" routerLinkActive="active-link">
 
         <mat-icon>
           history
@@ -115,16 +96,37 @@
 
       </a>
 
+      <a mat-button routerLink="/notifications" routerLinkActive="active-link">
+
+        <mat-icon>
+          notifications
+        </mat-icon>
+
+        <span>
+          Notifications
+        </span>
+
+      </a>
+
+      <a mat-button routerLink="/notes/trash" routerLinkActive="active-link">
+
+        <mat-icon>
+          delete
+        </mat-icon>
+
+        <span>
+          Trash
+        </span>
+
+      </a>
+
     </nav>
 
     <!-- FOOTER -->
 
     <div class="sidebar-footer">
 
-      <button
-        mat-raised-button
-        color="warn"
-        (click)="logout()">
+      <button mat-raised-button color="warn" (click)="logout()">
 
         <mat-icon>
           logout
@@ -150,10 +152,7 @@
 
       <!-- MOBILE MENU -->
 
-      <button
-        mat-icon-button
-        class="mobile-menu-btn"
-        (click)="sidenav.toggle()">
+      <button mat-icon-button class="mobile-menu-btn" (click)="sidenav.toggle()">
 
         <mat-icon>
           menu
@@ -177,9 +176,7 @@
           search
         </mat-icon>
 
-        <input
-          type="text"
-          placeholder="Search notes..." />
+        <input type="text" placeholder="Search notes..." />
 
       </div>
 
@@ -187,7 +184,7 @@
 
       <button mat-icon-button>
 
-        <mat-icon>
+        <mat-icon routerLink="/notifications">
           notifications
         </mat-icon>
 

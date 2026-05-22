@@ -12,15 +12,27 @@ import { AuthService } from '../../../../core/services/auth.service';
 
 export class RegisterComponent {
 
+  // =========================
+  // FORM FIELDS
+  // =========================
+
   name = '';
 
   email = '';
 
   password = '';
 
+  // =========================
+  // UI STATES
+  // =========================
+
   loading = false;
 
   errorMessage = '';
+
+  // =========================
+  // CONSTRUCTOR
+  // =========================
 
   constructor(
     private authService: AuthService,
@@ -33,18 +45,38 @@ export class RegisterComponent {
 
   async register() {
 
+    // VALIDATION
+
+    if (
+      !this.name ||
+      !this.email ||
+      !this.password
+    ) {
+
+      this.errorMessage =
+        'Please fill all fields';
+
+      return;
+    }
+
     try {
 
       this.loading = true;
 
       this.errorMessage = '';
 
+      // FIREBASE REGISTER
+
       await this.authService.register(
 
         this.name,
+
         this.email,
+
         this.password
       );
+
+      // REDIRECT
 
       this.router.navigate([
         '/workspace'

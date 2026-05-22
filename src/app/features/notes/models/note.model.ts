@@ -26,7 +26,10 @@ export interface Note {
   // Optional future features
   isPinned?: boolean;
 
+  // TRASH FEATURE
   isTrashed?: boolean;
+
+  trashedAt?: number;
 
   tags?: string[];
 }

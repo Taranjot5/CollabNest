@@ -64,6 +64,16 @@ const routes: Routes = [
         loadChildren: () =>
           import('./features/notes/notes.module')
             .then(m => m.NotesModule)
+      },
+
+      // Notifications
+      
+      {
+        path: 'notifications',
+        
+        loadChildren: () =>
+          import('./features/notifications/notifications.module')
+            .then(m => m.NotificationsModule)
       }
     ]
   },

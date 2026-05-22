@@ -1,0 +1,74 @@
+.page-title {
+
+  margin-bottom: 20px;
+}
+
+.notes-container {
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(300px, 1fr));
+
+  gap: 20px;
+}
+
+.note-card {
+
+  background: white;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 2px 10px rgba(0,0,0,0.1);
+}
+
+.note-preview {
+
+  margin-top: 10px;
+
+  max-height: 120px;
+
+  overflow: hidden;
+}
+
+.actions {
+
+  display: flex;
+
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.restore-btn {
+
+  background: #1976d2;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 15px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+}
+
+.delete-btn {
+
+  background: crimson;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 15px;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+}

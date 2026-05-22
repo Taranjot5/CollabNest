@@ -1,57 +1,153 @@
-<div class="register-container">
+<div class="register-page">
 
-  <div class="register-card">
+  <!-- LEFT SIDE -->
 
-    <h1>
-      Create Account
-    </h1>
+  <div class="register-left">
 
-    <input
-      type="text"
-      placeholder="Full Name"
-      [(ngModel)]="name">
+    <div class="overlay"></div>
 
-    <input
-      type="email"
-      placeholder="Email"
-      [(ngModel)]="email">
+    <div class="branding">
 
-    <input
-      type="password"
-      placeholder="Password"
-      [(ngModel)]="password">
+      <h1>
+        Knowledge Hub
+      </h1>
 
-    <button
-      (click)="register()"
-      [disabled]="loading">
+      <p>
+        Organize notes, collaborate with teams,
+        and manage your knowledge smarter.
+      </p>
 
-      {{
-        loading
-        ? 'Creating Account...'
-        : 'Register'
-      }}
+      <div class="features">
 
-    </button>
+        <div class="feature">
 
-    <p
-      class="error"
-      *ngIf="errorMessage">
+          <span>📘</span>
 
-      {{ errorMessage }}
+          <p>Smart Note Management</p>
 
-    </p>
+        </div>
 
-    <p class="login-link">
+        <div class="feature">
 
-      Already have an account?
+          <span>⭐</span>
 
-      <a routerLink="/auth/login">
+          <p>Star Important Notes</p>
 
-        Login
+        </div>
 
-      </a>
+        <div class="feature">
 
-    </p>
+          <span>👥</span>
+
+          <p>Share & Collaborate</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- RIGHT SIDE -->
+
+  <div class="register-right">
+
+    <div class="register-card">
+
+      <h2>
+        Create Account
+      </h2>
+
+      <p class="subtitle">
+        Start your productivity journey
+      </p>
+
+      <!-- NAME -->
+
+      <div class="input-group">
+
+        <label>
+          Full Name
+        </label>
+
+        <input
+          type="text"
+          placeholder="Enter your full name"
+          [(ngModel)]="name">
+
+      </div>
+
+      <!-- EMAIL -->
+
+      <div class="input-group">
+
+        <label>
+          Email Address
+        </label>
+
+        <input
+          type="email"
+          placeholder="Enter your email"
+          [(ngModel)]="email">
+
+      </div>
+
+      <!-- PASSWORD -->
+
+      <div class="input-group">
+
+        <label>
+          Password
+        </label>
+
+        <input
+          type="password"
+          placeholder="Enter your password"
+          [(ngModel)]="password">
+
+      </div>
+
+      <!-- REGISTER BUTTON -->
+
+      <button
+        class="register-btn"
+        (click)="register()"
+        [disabled]="loading">
+
+        {{
+          loading
+          ? 'Creating Account...'
+          : 'Create Account'
+        }}
+
+      </button>
+
+      <!-- ERROR -->
+
+      <p
+        class="error"
+        *ngIf="errorMessage">
+
+        {{ errorMessage }}
+
+      </p>
+
+      <!-- LOGIN LINK -->
+
+      <p class="login-link">
+
+        Already have an account?
+
+        <a routerLink="/auth/login">
+
+          Login
+
+        </a>
+
+      </p>
+
+    </div>
 
   </div>
 
