@@ -1,0 +1,277 @@
+<div class="workspace-details" *ngIf="workspace">
+
+  <!-- =========================
+       HEADER
+  ========================== -->
+
+  <div class="workspace-header">
+
+    <div>
+
+      <h1>
+        {{ workspace.name }}
+      </h1>
+
+      <p>
+        {{ workspace.description }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       STATS
+  ========================== -->
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+
+      <h2>
+        {{ workspace.members.length }}
+      </h2>
+
+      <span>
+        Members
+      </span>
+
+    </div>
+
+    <div class="stat-card">
+
+      <h2>
+        {{ notes.length }}
+      </h2>
+
+      <span>
+        Workspace Notes
+      </span>
+
+    </div>
+
+    <div class="stat-card">
+
+      <h2>
+        Active
+      </h2>
+
+      <span>
+        Workspace Status
+      </span>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       MEMBERS
+  ========================== -->
+
+  <div class="members-section">
+
+    <h2>
+      Members
+    </h2>
+
+    <div class="member-list">
+
+      <div class="member-chip" *ngFor="let member of members">
+
+        <div class="member-name">
+          {{ member?.name }}
+        </div>
+
+        <div class="member-email">
+          {{ member?.email }}
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       INVITE MEMBER
+  ========================== -->
+
+  <div class="invite-section">
+
+    <h2>
+      Invite Member
+    </h2>
+
+    <div class="invite-box">
+
+      <input type="email" placeholder="Enter member email" [(ngModel)]="inviteEmail">
+
+      <button (click)="inviteMember()">
+
+        Invite
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- =========================
+       CREATE NOTE
+  ========================== -->
+
+  <div class="create-note-section">
+
+    <h2>
+      Create Workspace Note
+    </h2>
+
+    <input type="text" placeholder="Note title" [(ngModel)]="title">
+
+    <textarea placeholder="Write your note..." [(ngModel)]="content">
+
+    </textarea>
+
+    <select [(ngModel)]="category">
+
+      <option *ngFor="let item of categories" [value]="item">
+
+        {{ item }}
+
+      </option>
+
+    </select>
+
+    <select [(ngModel)]="priority">
+
+      <option value="Low">
+        Low
+      </option>
+
+      <option value="Medium">
+        Medium
+      </option>
+
+      <option value="High">
+        High
+      </option>
+
+    </select>
+
+    <button (click)="createNote()">
+
+      Create Note
+
+    </button>
+
+  </div>
+
+  <!-- =========================
+       NOTES
+  ========================== -->
+
+  <div class="workspace-notes-section">
+
+    <div class="section-header">
+
+      <h2>
+        Workspace Notes
+      </h2>
+
+    </div>
+
+    <!-- EMPTY -->
+
+    <div class="empty-state" *ngIf="notes.length === 0">
+
+      No notes created yet.
+
+    </div>
+
+    <!-- NOTES GRID -->
+
+    <div class="notes-grid" *ngIf="notes.length > 0">
+
+      <div class="note-card" *ngFor="let note of notes">
+
+        <!-- NOTE TOP -->
+
+        <div class="note-top">
+
+          <div>
+
+            <h3>
+              {{ note.title }}
+            </h3>
+
+            <span class="category">
+
+              {{ note.category }}
+
+            </span>
+
+          </div>
+
+          <button class="star-btn" (click)="toggleStar(note)">
+
+            <span *ngIf="note.starredBy?.length">
+
+              ⭐
+
+            </span>
+
+            <span *ngIf="!note.starredBy?.length">
+
+              ☆
+
+            </span>
+
+          </button>
+
+        </div>
+
+        <!-- CONTENT -->
+
+        <p class="note-content">
+
+          {{ note.content }}
+
+        </p>
+
+        <!-- FOOTER -->
+
+        <div class="note-footer">
+
+          <span class="priority">
+
+            {{ note.priority }}
+
+          </span>
+
+          <span class="date">
+
+            {{ note.updatedAt | date:'short' }}
+
+          </span>
+
+        </div>
+
+        <!-- ACTIONS -->
+
+        <div class="note-actions">
+
+          <button class="delete-btn" (click)="deleteNote(note.id)">
+
+            Delete
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

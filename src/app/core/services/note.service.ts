@@ -20,6 +20,8 @@ import firebase from 'firebase/compat/app';
 
 import { Note } from '../../features/notes/models/note.model';
 
+import { NotificationService } from './notification.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,38 +30,60 @@ export class NoteService {
 
   constructor(
     private firestore: AngularFirestore,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private notificationService: NotificationService
   ) { }
 
   // =========================
   // GET NOTES
   // =========================
 
-  getNotes(): Observable<Note[]> {
+  getNotes(
+    workspaceId?: string
+  ): Observable<Note[]> {
 
     return this.afAuth.authState.pipe(
 
       switchMap(user => {
 
         if (!user) {
+
           return of([]);
         }
 
         return this.firestore
-          .collection<Note>('notes', ref =>
+          .collection<Note>('notes', ref => {
 
-            ref
-              .where(
-                'participants',
-                'array-contains',
-                user.uid
-              )
+            let query:
+              firebase.firestore.Query =
+              ref
 
-              .orderBy(
-                'updatedAt',
-                'desc'
-              )
-          )
+                .where(
+                  'participants',
+                  'array-contains',
+                  user.uid
+                )
+
+                .orderBy(
+                  'updatedAt',
+                  'desc'
+                );
+
+            // =========================
+            // WORKSPACE FILTER
+            // =========================
+
+            if (workspaceId) {
+
+              query = query.where(
+                'workspaceId',
+                '==',
+                workspaceId
+              );
+            }
+
+            return query;
+          })
 
           .snapshotChanges()
 
@@ -87,6 +111,16 @@ export class NoteService {
               notes.filter(note =>
 
                 !note.isTrashed
+
+                &&
+
+                (
+                  workspaceId
+
+                    ? note.workspaceId === workspaceId
+
+                    : !note.workspaceId
+                )
               )
             )
           );
@@ -99,10 +133,17 @@ export class NoteService {
   // =========================
 
   async createNote(
+
     title: string,
+
     content: string,
+
     category: string,
-    priority: string
+
+    priority: string,
+
+    workspaceId?: string
+
   ) {
 
     const user =
@@ -113,9 +154,11 @@ export class NoteService {
     const note: Note = {
 
       title,
+
       content,
 
       category,
+
       priority,
 
       createdAt: Date.now(),
@@ -132,7 +175,9 @@ export class NoteService {
 
       isTrashed: false,
 
-      trashedAt: 0
+      trashedAt: 0,
+
+      workspaceId
     };
 
     return this.firestore
@@ -200,6 +245,7 @@ export class NoteService {
       switchMap(user => {
 
         if (!user) {
+
           return of([]);
         }
 
@@ -286,8 +332,11 @@ export class NoteService {
   // =========================
 
   async shareNote(
+
     noteId: string,
+
     collaboratorEmail: string
+
   ) {
 
     const usersRef =
@@ -316,21 +365,52 @@ export class NoteService {
     const collaboratorUid =
       snapshot.docs[0].id;
 
+    // =========================
+    // ADD COLLABORATOR
+    // =========================
+
     await this.firestore
       .collection('notes')
       .doc(noteId)
       .update({
 
         participants:
-          firebase.firestore.FieldValue.arrayUnion(
-            collaboratorUid
-          ),
+
+          firebase.firestore
+            .FieldValue
+            .arrayUnion(
+              collaboratorUid
+            ),
 
         collaborators:
-          firebase.firestore.FieldValue.arrayUnion(
-            collaboratorEmail
-          )
+
+          firebase.firestore
+            .FieldValue
+            .arrayUnion(
+              collaboratorEmail
+            )
       });
+
+    // =========================
+    // CREATE NOTIFICATION
+    // =========================
+
+    await this.notificationService
+      .createNotification(
+
+        'New Shared Note',
+
+        'A note was shared with you',
+
+        'share',
+
+        collaboratorUid
+      );
+
+    console.log(
+      'Notification created for:',
+      collaboratorUid
+    );
 
     alert('Collaborator added');
   }
@@ -340,8 +420,11 @@ export class NoteService {
   // =========================
 
   async toggleStar(
+
     noteId: string,
+
     starredBy: string[]
+
   ) {
 
     const user =
@@ -359,11 +442,15 @@ export class NoteService {
 
         starredBy: isStarred
 
-          ? firebase.firestore.FieldValue.arrayRemove(
+          ? firebase.firestore
+            .FieldValue
+            .arrayRemove(
               user.uid
             )
 
-          : firebase.firestore.FieldValue.arrayUnion(
+          : firebase.firestore
+            .FieldValue
+            .arrayUnion(
               user.uid
             )
       });
@@ -373,13 +460,15 @@ export class NoteService {
   // GET STARRED NOTES
   // =========================
 
-  getStarredNotes(): Observable<Note[]> {
+  getStarredNotes():
+    Observable<Note[]> {
 
     return this.afAuth.authState.pipe(
 
       switchMap(user => {
 
         if (!user) {
+
           return of([]);
         }
 

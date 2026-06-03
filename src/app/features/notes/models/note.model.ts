@@ -31,5 +31,9 @@ export interface Note {
 
   trashedAt?: number;
 
+  // MULTI-TENANT WORKSPACE
+  workspaceId?: string;
+
+  // TAGS
   tags?: string[];
 }

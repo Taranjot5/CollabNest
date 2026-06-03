@@ -24,6 +24,10 @@ implements OnInit {
     this.loadTrashNotes();
   }
 
+  // =========================
+  // LOAD TRASH NOTES
+  // =========================
+
   loadTrashNotes() {
 
     this.noteService
@@ -34,6 +38,10 @@ implements OnInit {
       });
   }
 
+  // =========================
+  // RESTORE NOTE
+  // =========================
+
   async restoreNote(id?: string) {
 
     if (!id) return;
@@ -41,9 +49,20 @@ implements OnInit {
     await this.noteService.restoreNote(id);
   }
 
+  // =========================
+  // DELETE FOREVER
+  // =========================
+
   async deleteForever(id?: string) {
 
     if (!id) return;
+
+    const confirmed =
+      confirm(
+        'Delete permanently?'
+      );
+
+    if (!confirmed) return;
 
     await this.noteService.deleteForever(id);
   }

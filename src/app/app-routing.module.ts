@@ -79,6 +79,18 @@ const routes: Routes = [
   },
 
   // =========================
+  // WORKSPACES
+  // =========================
+
+  {
+  path: 'workspaces',
+
+  loadChildren: () =>
+    import('./features/workspaces/workspace.module')
+      .then(m => m.WorkspaceModule)
+},
+
+  // =========================
   // FALLBACK
   // =========================
 

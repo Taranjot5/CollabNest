@@ -2,11 +2,31 @@
   Trash Notes
 </h1>
 
+<div
+  class="empty-state"
+  *ngIf="trashedNotes.length === 0">
+
+  No notes in trash
+
+</div>
+
 <div class="notes-container">
 
   <div
     class="note-card"
     *ngFor="let note of trashedNotes">
+
+    <div class="top-row">
+
+      <span class="category">
+        {{ note.category }}
+      </span>
+
+      <span class="priority">
+        {{ note.priority }}
+      </span>
+
+    </div>
 
     <h3>
       {{ note.title }}

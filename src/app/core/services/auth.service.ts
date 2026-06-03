@@ -44,17 +44,19 @@ export class AuthService {
 
     if (!uid) return;
 
-    // STORE USER DATA
-
     await this.firestore
       .collection('users')
       .doc(uid)
       .set({
 
         uid,
+
         name,
+
         email,
-        createdAt: Date.now()
+
+        createdAt:
+          Date.now()
       });
 
     return userCredential;
@@ -76,13 +78,68 @@ export class AuthService {
       );
   }
 
+  // =========================
+  // GOOGLE LOGIN
+  // =========================
 
   async googleLogin() {
 
-  return this.afAuth.signInWithPopup(
-    new firebase.auth.GoogleAuthProvider()
-  );
-}
+    const result =
+      await this.afAuth
+        .signInWithPopup(
+
+          new firebase.auth
+            .GoogleAuthProvider()
+        );
+
+    const user =
+      result.user;
+
+    if (!user) return;
+
+    await this.firestore
+      .collection('users')
+      .doc(user.uid)
+      .set({
+
+        uid: user.uid,
+
+        name:
+          user.displayName || '',
+
+        email:
+          user.email || '',
+
+        createdAt:
+          Date.now()
+      },
+      {
+        merge: true
+      });
+
+    return result;
+  }
+
+  // =========================
+  // GET USER BY ID
+  // =========================
+
+  getUserById(uid: string) {
+
+    return this.firestore
+      .collection('users')
+      .doc(uid)
+      .valueChanges();
+  }
+
+  // =========================
+  // GET CURRENT USER
+  // =========================
+
+  getCurrentUser() {
+
+    return this.afAuth.authState;
+  }
 
   // =========================
   // LOGOUT

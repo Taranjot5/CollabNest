@@ -1,0 +1,64 @@
+<div class="workspace-page">
+
+  <h1 class="page-title">
+    Workspaces
+  </h1>
+
+  <!-- CREATE -->
+
+  <div class="create-workspace">
+
+    <input
+      type="text"
+      placeholder="Workspace Name"
+      [(ngModel)]="workspaceName">
+
+    <textarea
+      placeholder="Description"
+      [(ngModel)]="workspaceDescription">
+    </textarea>
+
+    <button
+      (click)="createWorkspace()">
+
+      {{
+        loading
+        ? 'Creating...'
+        : 'Create Workspace'
+      }}
+
+    </button>
+
+  </div>
+
+  <!-- LIST -->
+
+  <div class="workspace-grid">
+
+    <div
+      class="workspace-card"
+
+      *ngFor="let workspace of workspaces"
+
+      (click)="openWorkspace(workspace.id)">
+
+      <h2>
+        {{ workspace.name }}
+      </h2>
+
+      <p>
+        {{ workspace.description }}
+      </p>
+
+      <div class="meta">
+
+        Members:
+        {{ workspace.members.length }}
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
