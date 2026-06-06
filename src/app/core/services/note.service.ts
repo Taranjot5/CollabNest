@@ -142,8 +142,9 @@ export class NoteService {
 
     priority: string,
 
-    workspaceId?: string
+    workspaceId?: string,
 
+    folderId?: string
   ) {
 
     const user =
@@ -151,7 +152,7 @@ export class NoteService {
 
     if (!user) return;
 
-    const note: Note = {
+    const note: any = {
 
       title,
 
@@ -177,8 +178,12 @@ export class NoteService {
 
       trashedAt: 0,
 
-      workspaceId
+      folderId: folderId || ''
     };
+
+    if (workspaceId) {
+      note.workspaceId = workspaceId;
+    }
 
     return this.firestore
       .collection('notes')

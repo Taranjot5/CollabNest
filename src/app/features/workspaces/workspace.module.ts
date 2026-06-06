@@ -12,12 +12,14 @@ import {
   WorkspaceListComponent
 } from './pages/workspace-list/workspace-list.component';
 import { WorkspaceDetailsComponent } from './pages/workspace-details/workspace-details.component';
+import { ActivityHistoryComponent } from './pages/activity-history/activity-history.component';
 
 @NgModule({
 
   declarations: [
     WorkspaceListComponent,
-    WorkspaceDetailsComponent
+    WorkspaceDetailsComponent,
+    ActivityHistoryComponent
   ],
 
   imports: [

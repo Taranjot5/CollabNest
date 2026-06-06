@@ -1,39 +1,36 @@
 export interface Note {
 
-  id?: string;
+id?: string;
 
-  title: string;
+title: string;
 
-  content: string;
+content: string;
 
-  category: string;
+category: string;
 
-  priority: string;
+priority: string;
 
-  createdAt: number;
+createdAt: number;
 
-  updatedAt: number;
+updatedAt: number;
 
-  createdBy: string;
+createdBy: string;
 
-  participants: string[];
+participants: string[];
 
-  collaborators: string[];
+collaborators: string[];
 
-  // Users who starred this note
-  starredBy?: string[];
+starredBy?: string[];
 
-  // Optional future features
-  isPinned?: boolean;
+isPinned?: boolean;
 
-  // TRASH FEATURE
-  isTrashed?: boolean;
+isTrashed?: boolean;
 
-  trashedAt?: number;
+trashedAt?: number;
 
-  // MULTI-TENANT WORKSPACE
-  workspaceId?: string;
+workspaceId?: string;
 
-  // TAGS
-  tags?: string[];
+folderId?: string;
+
+tags?: string[];
 }

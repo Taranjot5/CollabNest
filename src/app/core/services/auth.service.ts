@@ -9,6 +9,7 @@ import {
 } from '@angular/fire/compat/firestore';
 
 import firebase from 'firebase/compat/app';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class AuthService {
   constructor(
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore
-  ) {}
+  ) { }
 
   // =========================
   // REGISTER
@@ -49,15 +50,25 @@ export class AuthService {
       .doc(uid)
       .set({
 
+
         uid,
 
         name,
 
         email,
 
+        bio: '',
+
+        department: '',
+
+        designation: '',
+
         createdAt:
           Date.now()
+
+
       });
+
 
     return userCredential;
   }
@@ -102,6 +113,7 @@ export class AuthService {
       .doc(user.uid)
       .set({
 
+
         uid: user.uid,
 
         name:
@@ -110,12 +122,21 @@ export class AuthService {
         email:
           user.email || '',
 
+        bio: '',
+
+        department: '',
+
+        designation: '',
+
         createdAt:
           Date.now()
+
+
       },
-      {
-        merge: true
-      });
+        {
+          merge: true
+        });
+
 
     return result;
   }
@@ -129,7 +150,17 @@ export class AuthService {
     return this.firestore
       .collection('users')
       .doc(uid)
-      .valueChanges();
+      .valueChanges()
+
+      .pipe(
+
+        map((user: any) => ({
+
+          ...user,
+
+          id: uid
+        }))
+      );
   }
 
   // =========================
@@ -140,6 +171,37 @@ export class AuthService {
 
     return this.afAuth.authState;
   }
+
+  // =========================
+  // UPDATE PROFILE
+  // =========================
+
+  updateProfile(
+
+    uid: string,
+
+    data: {
+
+
+      name: string;
+
+      bio: string;
+
+      department: string;
+
+      designation: string;
+
+
+    }
+
+  ) {
+
+    return this.firestore
+      .collection('users')
+      .doc(uid)
+      .update(data);
+  }
+
 
   // =========================
   // LOGOUT

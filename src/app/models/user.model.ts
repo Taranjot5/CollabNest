@@ -1,8 +1,16 @@
-export interface User {
+export interface AppUser {
 
-  uid: string;
+uid: string;
 
-  name: string;
+email: string;
 
-  email: string;
+name: string;
+
+bio?: string;
+
+department?: string;
+
+designation?: string;
+
+createdAt?: number;
 }

@@ -19,14 +19,19 @@ import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
 import { CoreModule } from './core/core.module';
 
 import { QuillModule } from 'ngx-quill';
+import { ProfileComponent } from './features/profile/profile/profile.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
 
   declarations: [
-    AppComponent
+    AppComponent,
+    ProfileComponent
   ],
 
   imports: [
+
+    FormsModule,
 
     BrowserModule,
 

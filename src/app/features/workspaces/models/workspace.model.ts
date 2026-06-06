@@ -8,6 +8,8 @@ export interface Workspace {
 
   createdBy: string;
 
+  ownerId: string;
+
   createdAt: number;
 
   members: string[];

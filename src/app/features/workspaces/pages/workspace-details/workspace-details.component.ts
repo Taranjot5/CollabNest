@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { AngularFireAuth } from '@angular/fire/compat/auth';
+
 import { ActivatedRoute } from '@angular/router';
 
 import { forkJoin } from 'rxjs';
@@ -7,7 +9,8 @@ import { forkJoin } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import {
-  WorkspaceService
+  WorkspaceService,
+  WorkspaceActivity
 } from '../../services/workspace.service';
 
 import {
@@ -25,15 +28,32 @@ import {
 import {
   AuthService
 } from '../../../../core/services/auth.service';
+import { Folder } from '../../../folders/models/folder.model';
+import { FolderService } from '../../../folders/services/folder.service';
 
 @Component({
   selector: 'app-workspace-details',
   templateUrl: './workspace-details.component.html',
   styleUrls: ['./workspace-details.component.scss']
 })
-
 export class WorkspaceDetailsComponent
-implements OnInit {
+  implements OnInit {
+
+  selectedFolderFilter = '';
+
+  folders: Folder[] = [];
+
+  selectedFolderId = '';
+
+  currentUserId = '';
+
+  starredNotes = 0;
+
+  recentActivities = 0;
+
+  isOwner = false;
+
+  isAdmin = false;
 
   // =========================
   // WORKSPACE
@@ -54,6 +74,12 @@ implements OnInit {
   // =========================
 
   notes: Note[] = [];
+
+  // =========================
+  // ACTIVITIES
+  // =========================
+
+  activities: WorkspaceActivity[] = [];
 
   // =========================
   // INVITE MEMBER
@@ -81,19 +107,19 @@ implements OnInit {
   ];
 
   constructor(
+    private folderService: FolderService,
 
     private route: ActivatedRoute,
 
-    private workspaceService:
-    WorkspaceService,
+    private workspaceService: WorkspaceService,
 
-    private noteService:
-    NoteService,
+    private noteService: NoteService,
 
-    private authService:
-    AuthService
+    private authService: AuthService,
 
-  ) {}
+    private afAuth: AngularFireAuth
+
+  ) { }
 
   // =========================
   // INIT
@@ -104,9 +130,108 @@ implements OnInit {
     this.workspaceId =
       this.route.snapshot.params['id'];
 
-    this.loadWorkspace();
+    this.afAuth.authState.subscribe(user => {
 
-    this.loadWorkspaceNotes();
+      if (!user) {
+        return;
+      }
+
+      this.currentUserId = user.uid;
+
+      this.loadWorkspace();
+
+      this.loadWorkspaceNotes();
+
+      this.loadActivities();
+    });
+  }
+
+  getRole(memberId: string): string {
+
+    if (!this.workspace) {
+      return 'Member';
+    }
+
+    if (
+      this.workspace.ownerId === memberId
+    ) {
+      return 'Owner';
+    }
+
+    if (
+      this.workspace.admins?.includes(memberId)
+    ) {
+      return 'Admin';
+    }
+
+    return 'Member';
+  }
+
+  loadFolders() {
+
+    this.folderService
+      .getFolders(
+        this.workspaceId
+      )
+      .subscribe(data => {
+
+        this.folders = data;
+      });
+  }
+
+  async createFolder() {
+
+    const name =
+      prompt('Folder Name');
+
+    if (!name) {
+      return;
+    }
+
+    await this.folderService
+      .createFolder(
+        name,
+        this.workspaceId
+      );
+  }
+
+  filterByFolder(
+    folderId?: string
+  ) {
+
+    this.selectedFolderFilter =
+      folderId || '';
+  }
+
+  get filteredNotes() {
+
+    if (
+      !this.selectedFolderFilter
+    ) {
+
+      return this.notes;
+    }
+
+    return this.notes.filter(
+
+      note =>
+
+        note.folderId ===
+        this.selectedFolderFilter
+    );
+  }
+
+  getFolderName(
+    folderId?: string
+  ) {
+
+    return this.folders.find(
+
+      folder =>
+
+        folder.id === folderId
+
+    )?.name || '';
   }
 
   // =========================
@@ -125,7 +250,16 @@ implements OnInit {
 
           this.workspace = data;
 
+          this.isOwner =
+            data.ownerId === this.currentUserId;
+
+          this.isAdmin =
+            data.admins?.includes(
+              this.currentUserId
+            ) || this.isOwner;
+
           this.loadMembers();
+          this.loadFolders();
         }
       });
   }
@@ -135,6 +269,7 @@ implements OnInit {
   // =========================
 
   loadMembers() {
+
 
     if (
       !this.workspace ||
@@ -157,10 +292,12 @@ implements OnInit {
 
         this.members = users;
       });
+
+
   }
 
   // =========================
-  // LOAD WORKSPACE NOTES
+  // LOAD NOTES
   // =========================
 
   loadWorkspaceNotes() {
@@ -170,6 +307,30 @@ implements OnInit {
       .subscribe(notes => {
 
         this.notes = notes;
+
+        this.starredNotes =
+          notes.filter(
+            n =>
+              n.starredBy &&
+              n.starredBy.length > 0
+          ).length;
+      });
+  }
+
+  // =========================
+  // LOAD ACTIVITIES
+  // =========================
+
+  loadActivities() {
+
+    this.workspaceService
+      .getActivities(this.workspaceId)
+      .subscribe(data => {
+
+        this.activities = data;
+
+        this.recentActivities =
+          data.length;
       });
   }
 
@@ -178,6 +339,7 @@ implements OnInit {
   // =========================
 
   async createNote() {
+
 
     if (
       !this.title.trim() ||
@@ -199,7 +361,9 @@ implements OnInit {
 
           this.priority,
 
-          this.workspaceId
+          this.workspaceId,
+
+          this.selectedFolderId
         );
 
       this.title = '';
@@ -217,6 +381,7 @@ implements OnInit {
         error
       );
     }
+
   }
 
   // =========================
@@ -224,10 +389,13 @@ implements OnInit {
   // =========================
 
   async deleteNote(
-    id?: string
+    id?: string,
+    title?: string
   ) {
 
-    if (!id) return;
+    if (!id) {
+      return;
+    }
 
     try {
 
@@ -241,6 +409,8 @@ implements OnInit {
         error
       );
     }
+
+
   }
 
   // =========================
@@ -251,7 +421,10 @@ implements OnInit {
     note: Note
   ) {
 
-    if (!note.id) return;
+
+    if (!note.id) {
+      return;
+    }
 
     try {
 
@@ -270,6 +443,8 @@ implements OnInit {
         error
       );
     }
+
+
   }
 
   // =========================
@@ -277,6 +452,7 @@ implements OnInit {
   // =========================
 
   async inviteMember() {
+
 
     if (
       !this.inviteEmail.trim()
@@ -303,6 +479,8 @@ implements OnInit {
         error
       );
     }
+
+
   }
 
   // =========================
@@ -312,6 +490,7 @@ implements OnInit {
   async removeMember(
     memberId: string
   ) {
+
 
     try {
 
@@ -330,6 +509,8 @@ implements OnInit {
         error
       );
     }
+
+
   }
 
   // =========================
@@ -337,6 +518,7 @@ implements OnInit {
   // =========================
 
   async deleteWorkspace() {
+
 
     if (!this.workspaceId) {
       return;
@@ -365,5 +547,25 @@ implements OnInit {
         error
       );
     }
+
+
+  }
+
+  async makeAdmin(memberId: string) {
+
+    await this.workspaceService
+      .makeAdmin(
+        this.workspaceId,
+        memberId
+      );
+  }
+
+  async removeAdmin(memberId: string) {
+
+    await this.workspaceService
+      .removeAdmin(
+        this.workspaceId,
+        memberId
+      );
   }
 }

@@ -8,6 +8,7 @@ import {
 import { authGuard } from './core/guards/auth.guard';
 
 import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { ProfileComponent } from './features/profile/profile/profile.component';
 
 const routes: Routes = [
 
@@ -67,10 +68,10 @@ const routes: Routes = [
       },
 
       // Notifications
-      
+
       {
         path: 'notifications',
-        
+
         loadChildren: () =>
           import('./features/notifications/notifications.module')
             .then(m => m.NotificationsModule)
@@ -83,12 +84,21 @@ const routes: Routes = [
   // =========================
 
   {
-  path: 'workspaces',
+    path: 'workspaces',
 
-  loadChildren: () =>
-    import('./features/workspaces/workspace.module')
-      .then(m => m.WorkspaceModule)
-},
+    loadChildren: () =>
+      import('./features/workspaces/workspace.module')
+        .then(m => m.WorkspaceModule)
+  },
+
+  // =========================
+  // PROFILE
+  // =========================
+
+  {
+    path: 'profile',
+    component: ProfileComponent
+  },
 
   // =========================
   // FALLBACK
@@ -111,4 +121,4 @@ const routes: Routes = [
   ]
 })
 
-export class AppRoutingModule {}
+export class AppRoutingModule { }

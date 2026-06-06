@@ -1,0 +1,41 @@
+<div class="activity-page">
+
+  <h1>
+    Activity History
+  </h1>
+
+  <div
+    class="activity-card"
+
+    *ngFor="
+      let activity
+      of activities">
+
+    <h3>
+
+      {{ activity.userName }}
+
+    </h3>
+
+    <p>
+
+      {{ activity.action }}
+
+      -
+
+      {{ activity.target }}
+
+    </p>
+
+    <span>
+
+      {{
+        activity.createdAt
+        | date:'short'
+      }}
+
+    </span>
+
+  </div>
+
+</div>
