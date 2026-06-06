@@ -225,7 +225,7 @@
 
     </div>
 
-    <div class="folder-card" (click)="filterByFolder('')">
+    <div class="folder-card" [class.active]="selectedFolderFilter === ''" (click)="filterByFolder('')">
 
       All Notes
 
@@ -234,8 +234,8 @@
     <div class="folder-list" *ngIf="folders.length > 0">
 
 
-      <div class="folder-card" *ngFor="let folder of folders" (click)="filterByFolder(folder.id)">
-
+      <div class="folder-card" *ngFor="let folder of folders" [class.active]="selectedFolderFilter === folder.id"
+        (click)="filterByFolder(folder.id)">
         {{ folder.name }}
 
       </div>
@@ -331,8 +331,7 @@
 
     </div>
 
-    <div class="empty-state" *ngIf="notes.length === 0">
-
+    <div class="empty-state" *ngIf="filteredNotes.length === 0">
       No notes created yet.
 
     </div>
