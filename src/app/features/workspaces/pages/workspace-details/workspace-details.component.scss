@@ -1054,3 +1054,295 @@ EMPTY FOLDER STATE
 
   color: #64748b;
 }
+
+/* =========================
+SEARCH PANEL
+========================= */
+
+.search-panel {
+
+  margin-bottom: 24px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 14px;
+}
+
+.search-panel input[type="text"] {
+
+  width: 100%;
+
+  padding: 14px 18px;
+
+  border: 1px solid #dbe3ea;
+
+  border-radius: 12px;
+
+  font-size: 15px;
+
+  background: #ffffff;
+
+  transition: all 0.3s ease;
+}
+
+.search-panel input[type="text"]:focus {
+
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 4px rgba(37,
+      99,
+      235,
+      0.1);
+}
+
+/* =========================
+FILTERS ROW
+========================= */
+
+.filters-row {
+
+  display: flex;
+
+  gap: 15px;
+
+  align-items: center;
+
+  flex-wrap: wrap;
+}
+
+/* =========================
+CATEGORY FILTER
+========================= */
+
+.filters-row select {
+
+  min-width: 220px;
+
+  padding: 12px 14px;
+
+  border: 1px solid #dbe3ea;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.filters-row select:focus {
+
+  outline: none;
+
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 4px rgba(37,
+      99,
+      235,
+      0.1);
+}
+
+/* =========================
+STAR FILTER
+========================= */
+
+.star-filter {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+
+  padding: 12px 16px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  font-weight: 500;
+
+  cursor: pointer;
+}
+
+.star-filter input {
+
+  width: 16px;
+
+  height: 16px;
+
+  cursor: pointer;
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+  .filters-row {
+
+
+    flex-direction: column;
+
+    align-items: stretch;
+
+
+  }
+
+  .filters-row select {
+
+
+    width: 100%;
+
+
+  }
+
+  .star-filter {
+
+
+    width: 100%;
+
+
+  }
+}
+
+.folder-card {
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.folder-actions {
+
+  display: flex;
+  gap: 6px;
+}
+
+.rename-btn,
+.delete-folder-btn {
+
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.comments-section {
+
+  margin-top: 18px;
+
+  padding-top: 16px;
+
+  border-top:
+    1px solid #e5e7eb;
+}
+
+.comments-header {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  align-items: center;
+
+  font-weight: 600;
+
+  margin-bottom: 12px;
+}
+
+.comment-list {
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 10px;
+
+  margin-bottom: 12px;
+}
+
+.comment-item {
+
+  padding: 10px;
+
+  background: #f8fafc;
+
+  border-radius: 10px;
+}
+
+.comment-top {
+
+  display: flex;
+
+  justify-content: space-between;
+
+  font-size: 12px;
+
+  margin-bottom: 6px;
+}
+
+.comment-message {
+
+  font-size: 14px;
+
+  line-height: 1.5;
+}
+
+.delete-comment-btn {
+
+  margin-top: 8px;
+
+  border: none;
+
+  background: transparent;
+
+  color: #dc2626;
+
+  cursor: pointer;
+
+  font-size: 12px;
+}
+
+.comment-form {
+
+  display: flex;
+
+  gap: 10px;
+}
+
+.comment-form input {
+
+  flex: 1;
+
+  padding: 10px;
+
+  border: 1px solid #dbe3ea;
+
+  border-radius: 8px;
+}
+
+.comment-form button {
+
+  padding: 10px 16px;
+
+  border: none;
+
+  border-radius: 8px;
+
+  cursor: pointer;
+}

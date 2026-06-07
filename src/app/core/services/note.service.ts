@@ -14,6 +14,11 @@ import {
   switchMap
 } from 'rxjs';
 
+import {
+  NoteVersionService
+}
+  from '../../features/notes/services/note-version.service';
+
 import { map } from 'rxjs/operators';
 
 import firebase from 'firebase/compat/app';
@@ -29,6 +34,7 @@ import { NotificationService } from './notification.service';
 export class NoteService {
 
   constructor(
+    private noteVersionService: NoteVersionService,
     private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
     private notificationService: NotificationService
@@ -205,22 +211,75 @@ export class NoteService {
   // =========================
   // UPDATE NOTE
   // =========================
+  async updateNote(
 
-  updateNote(
     id: string,
+
     note: Partial<Note>
+
   ) {
 
+    const user =
+      await this.afAuth.currentUser;
+
+    if (!user) {
+      return;
+    }
+
+    const snapshot =
+
+
+      await this.firestore
+
+        .collection('notes')
+
+        .doc(id)
+
+        .ref
+
+        .get();
+
+
+    if (!snapshot.exists) {
+      return;
+    }
+
+    const existing =
+      snapshot.data() as Note;
+
+    await this
+      .noteVersionService
+      .saveVersion(
+
+
+        id,
+
+        existing.title,
+
+        existing.content,
+
+        user.uid
+      );
+
+
     return this.firestore
+
+
       .collection('notes')
+
       .doc(id)
+
       .update({
 
         ...note,
 
-        updatedAt: Date.now()
+        updatedAt:
+          Date.now()
       });
+
+
   }
+
 
   // =========================
   // MOVE NOTE TO TRASH

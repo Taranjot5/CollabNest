@@ -1,36 +1,41 @@
+import { Attachment }
+    from './attachment.model';
+
 export interface Note {
 
-id?: string;
+    id?: string;
 
-title: string;
+    title: string;
 
-content: string;
+    content: string;
 
-category: string;
+    category: string;
 
-priority: string;
+    priority: string;
 
-createdAt: number;
+    createdAt: number;
 
-updatedAt: number;
+    updatedAt: number;
 
-createdBy: string;
+    createdBy: string;
 
-participants: string[];
+    participants: string[];
 
-collaborators: string[];
+    collaborators: string[];
 
-starredBy?: string[];
+    starredBy?: string[];
 
-isPinned?: boolean;
+    isPinned?: boolean;
 
-isTrashed?: boolean;
+    isTrashed?: boolean;
 
-trashedAt?: number;
+    trashedAt?: number;
 
-workspaceId?: string;
+    workspaceId?: string;
 
-folderId?: string;
+    folderId?: string;
 
-tags?: string[];
+    tags?: string[];
+
+    attachments?: Attachment[];
 }

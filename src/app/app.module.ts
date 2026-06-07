@@ -21,6 +21,10 @@ import { CoreModule } from './core/core.module';
 import { QuillModule } from 'ngx-quill';
 import { ProfileComponent } from './features/profile/profile/profile.component';
 import { FormsModule } from '@angular/forms';
+import {
+  AngularFireStorageModule
+}
+  from '@angular/fire/compat/storage';
 
 @NgModule({
 
@@ -30,6 +34,8 @@ import { FormsModule } from '@angular/forms';
   ],
 
   imports: [
+
+    AngularFireStorageModule,
 
     FormsModule,
 
@@ -90,4 +96,4 @@ import { FormsModule } from '@angular/forms';
   bootstrap: [AppComponent]
 })
 
-export class AppModule {}
+export class AppModule { }

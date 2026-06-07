@@ -8,6 +8,17 @@ import { forkJoin } from 'rxjs';
 
 import { take } from 'rxjs/operators';
 
+import { CommentService }
+  from '../../../notes/services/comment.service';
+
+import {
+  NotificationService
+}
+  from '../../../../core/services/notification.service';
+
+import { Comment }
+  from '../../../notes/models/comment.model';
+
 import {
   WorkspaceService,
   WorkspaceActivity
@@ -31,6 +42,11 @@ import {
 import { Folder } from '../../../folders/models/folder.model';
 import { FolderService } from '../../../folders/services/folder.service';
 
+import {
+  NoteVersionService
+}
+  from '../../../notes/services/note-version.service';
+
 @Component({
   selector: 'app-workspace-details',
   templateUrl: './workspace-details.component.html',
@@ -38,6 +54,27 @@ import { FolderService } from '../../../folders/services/folder.service';
 })
 export class WorkspaceDetailsComponent
   implements OnInit {
+  selectedVersions: any[] = [];
+
+  selectedVersionNote?: Note;
+
+  selectedFiles: File[] = [];
+
+  comments: {
+    [noteId: string]: Comment[];
+  } = {};
+
+  commentInputs: {
+    [noteId: string]: string;
+  } = {};
+
+  searchTerm = '';
+
+  selectedCategoryFilter = '';
+
+  selectedTagFilter = '';
+
+  showStarredOnly = false;
 
   selectedFolderFilter = '';
 
@@ -55,41 +92,17 @@ export class WorkspaceDetailsComponent
 
   isAdmin = false;
 
-  // =========================
-  // WORKSPACE
-  // =========================
-
   workspace?: Workspace;
 
   workspaceId = '';
 
-  // =========================
-  // MEMBERS
-  // =========================
-
   members: any[] = [];
-
-  // =========================
-  // NOTES
-  // =========================
 
   notes: Note[] = [];
 
-  // =========================
-  // ACTIVITIES
-  // =========================
-
   activities: WorkspaceActivity[] = [];
 
-  // =========================
-  // INVITE MEMBER
-  // =========================
-
   inviteEmail = '';
-
-  // =========================
-  // CREATE NOTE
-  // =========================
 
   title = '';
 
@@ -107,6 +120,12 @@ export class WorkspaceDetailsComponent
   ];
 
   constructor(
+    private noteVersionService: NoteVersionService,
+
+    private notificationService: NotificationService,
+
+    private commentService: CommentService,
+
     private folderService: FolderService,
 
     private route: ActivatedRoute,
@@ -195,6 +214,48 @@ export class WorkspaceDetailsComponent
       );
   }
 
+  async renameFolder(
+    folder: Folder
+  ) {
+
+    const name = prompt(
+      'Rename Folder',
+      folder.name
+    );
+
+    if (
+      !name ||
+      name === folder.name
+    ) {
+      return;
+    }
+
+    await this.folderService
+      .updateFolder(
+        folder.id!,
+        name
+      );
+  }
+
+  async deleteFolder(
+    folder: Folder
+  ) {
+
+    const confirmed =
+      confirm(
+        `Delete "${folder.name}"?`
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await this.folderService
+      .deleteFolder(
+        folder.id!
+      );
+  }
+
   filterByFolder(
     folderId?: string
   ) {
@@ -203,23 +264,110 @@ export class WorkspaceDetailsComponent
       folderId || '';
   }
 
-  get filteredNotes() {
+  get filteredNotes(): Note[] {
 
-    if (
-      !this.selectedFolderFilter
-    ) {
+    let filtered = [...this.notes];
 
-      return this.notes;
+    // Folder
+
+    if (this.selectedFolderFilter) {
+
+
+      filtered = filtered.filter(
+
+        note =>
+
+          note.folderId ===
+          this.selectedFolderFilter
+      );
+
+
     }
 
-    return this.notes.filter(
+    // Search
 
-      note =>
+    if (this.searchTerm.trim()) {
 
-        note.folderId ===
-        this.selectedFolderFilter
-    );
+
+      const term =
+        this.searchTerm
+          .toLowerCase();
+
+      filtered = filtered.filter(
+
+        note =>
+
+          note.title
+            .toLowerCase()
+            .includes(term)
+
+          ||
+
+          note.content
+            .toLowerCase()
+            .includes(term)
+      );
+
+
+    }
+
+    // Category
+
+    if (
+      this.selectedCategoryFilter
+    ) {
+
+
+      filtered = filtered.filter(
+
+        note =>
+
+          note.category ===
+          this.selectedCategoryFilter
+      );
+
+
+    }
+
+    // Tags
+
+    if (
+      this.selectedTagFilter
+    ) {
+
+
+      filtered = filtered.filter(
+
+        note =>
+
+          note.tags?.includes(
+            this.selectedTagFilter
+          )
+      );
+
+
+    }
+
+    // Starred
+
+    if (
+      this.showStarredOnly
+    ) {
+
+
+      filtered = filtered.filter(
+
+        note =>
+
+          note.starredBy?.length
+      );
+
+
+    }
+
+    return filtered;
   }
+
 
   getFolderName(
     folderId?: string
@@ -308,6 +456,17 @@ export class WorkspaceDetailsComponent
 
         this.notes = notes;
 
+        notes.forEach(note => {
+
+          if (!note.id) {
+            return;
+          }
+
+          this.loadComments(
+            note.id
+          );
+        });
+
         this.starredNotes =
           notes.filter(
             n =>
@@ -315,6 +474,155 @@ export class WorkspaceDetailsComponent
               n.starredBy.length > 0
           ).length;
       });
+  }
+
+  loadComments(
+    noteId: string
+  ) {
+
+    this.commentService
+
+      .getComments(noteId)
+
+      .subscribe(data => {
+
+        this.comments[noteId] =
+          data;
+      });
+  }
+
+  async addComment(
+    note: Note
+  ) {
+
+    if (!note.id) {
+      return;
+    }
+
+    const message =
+
+      this.commentInputs[
+        note.id
+      ]?.trim();
+
+    if (!message) {
+      return;
+    }
+
+    const user =
+
+      this.members.find(
+
+        m =>
+
+          m.id ===
+          this.currentUserId
+      );
+
+    await this.commentService
+      .addComment(
+
+
+        note.id,
+
+        this.workspaceId,
+
+        message,
+
+        user?.name ||
+        'Unknown User'
+
+
+      );
+
+    /* ======================
+    COMMENT NOTIFICATIONS
+    ====================== */
+
+    const receivers =
+      new Set<string>();
+
+    if (
+      note.createdBy &&
+      note.createdBy !==
+      this.currentUserId
+    ) {
+
+      receivers.add(
+        note.createdBy
+      );
+    }
+
+    note.participants
+      ?.forEach(id => {
+
+
+        if (
+          id !==
+          this.currentUserId
+        ) {
+
+          receivers.add(id);
+        }
+
+
+      });
+
+    note.collaborators
+      ?.forEach(id => {
+
+
+        if (
+          id !==
+          this.currentUserId
+        ) {
+
+          receivers.add(id);
+        }
+
+
+      });
+
+    for (
+      const receiverId
+      of receivers
+    ) {
+
+      await this
+        .notificationService
+        .createNotification(
+
+
+          'New Comment',
+
+          `${user?.name} commented on "${note.title}"`,
+
+          'comment',
+
+          receiverId
+        );
+
+
+    }
+
+
+    this.commentInputs[
+      note.id
+    ] = '';
+  }
+
+  async deleteComment(
+    commentId?: string
+  ) {
+
+    if (!commentId) {
+      return;
+    }
+
+    await this.commentService
+      .deleteComment(
+        commentId
+      );
   }
 
   // =========================
@@ -374,6 +682,8 @@ export class WorkspaceDetailsComponent
 
       this.priority = 'Medium';
 
+      this.selectedFolderId = '';
+
     } catch (error) {
 
       console.error(
@@ -383,6 +693,76 @@ export class WorkspaceDetailsComponent
     }
 
   }
+
+  async editNote(
+    note: Note
+  ) {
+
+    if (!note.id) {
+      return;
+    }
+
+    const title = prompt(
+      'Edit Title',
+      note.title
+    );
+
+    if (!title) {
+      return;
+    }
+
+    const content = prompt(
+      'Edit Content',
+      note.content
+    );
+
+    if (!content) {
+      return;
+    }
+
+    await this.noteService
+      .updateNote(
+
+
+        note.id,
+
+        {
+          title,
+          content
+        }
+      );
+
+
+  }
+
+  showVersions(
+    note: Note
+  ) {
+
+    if (!note.id) {
+      return;
+    }
+
+    this.selectedVersionNote =
+      note;
+
+    this.noteVersionService
+
+
+      .getVersions(
+        note.id
+      )
+
+      .subscribe(data => {
+
+        this.selectedVersions =
+          data;
+      });
+
+
+  }
+
+
 
   // =========================
   // DELETE NOTE
