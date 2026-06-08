@@ -33,7 +33,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   searchQuery = '';
 
-  pageTitle = 'Knowledge Hub';
+  pageTitle = 'Collab Nest';
 
   userProfile: AppUser | null = null;
 
@@ -220,7 +220,7 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.pageTitle = 'Knowledge Hub';
+    this.pageTitle = 'Collab Nest';
   }
 
   onSearch(): void {

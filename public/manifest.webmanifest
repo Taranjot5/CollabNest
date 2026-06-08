@@ -1,6 +1,6 @@
 {
-  "name": "Knowledge Hub",
-  "short_name": "KnowledgeHub",
+  "name": "Collab Nest",
+  "short_name": "Collab Nest",
   "description": "Collaborative workspace for notes, tasks, and team knowledge",
   "start_url": "/",
   "display": "standalone",

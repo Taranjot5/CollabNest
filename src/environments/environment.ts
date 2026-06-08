@@ -1,7 +1,7 @@
 export const environment = {
   production: false,
 
-  firebaseConfig: {
+  firebaseConfig: {    
   apiKey: "AIzaSyCMdTv3JngtJpfRGXiRdRzbXPaD55qhdRQ",
   authDomain: "knowledge-hub-24183.firebaseapp.com",
   projectId: "knowledge-hub-24183",
