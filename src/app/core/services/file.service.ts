@@ -29,9 +29,31 @@ export class FileService {
 
   ) { }
 
+  async uploadTaskFile(
+    file: File,
+    taskId: string
+  ): Promise<any> {
+
+    return this.uploadToPath(
+      file,
+      `task-attachments/${taskId}/${Date.now()}_${file.name}`
+    );
+  }
+
   async uploadFile(
     file: File,
     workspaceId: string
+  ): Promise<any> {
+
+    return this.uploadToPath(
+      file,
+      `attachments/${workspaceId}/${Date.now()}_${file.name}`
+    );
+  }
+
+  private async uploadToPath(
+    file: File,
+    path: string
   ): Promise<any> {
 
     const user =
@@ -40,12 +62,6 @@ export class FileService {
     if (!user) {
       throw Error('No user');
     }
-
-    const path =
-
-      `attachments/
-     ${workspaceId}/
-     ${Date.now()}_${file.name}`;
 
     const ref =
       this.storage.ref(path);

@@ -1,0 +1,287 @@
+<div class="task-details-page" *ngIf="!loading && task">
+
+  <div class="details-header">
+    <button class="back-btn" routerLink="/tasks">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Tasks
+    </button>
+
+    <div class="header-actions" *ngIf="canManageTasks">
+      <button class="edit-btn" (click)="editTask()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <button class="delete-btn" (click)="deleteTask()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <div class="details-grid">
+
+    <!-- MAIN INFO -->
+
+    <div class="main-panel">
+
+      <div class="task-title-row">
+        <h1>{{ task.title }}</h1>
+        <span class="status-badge" [ngClass]="task.status">
+          {{ getStatusLabel(task.status) }}
+        </span>
+      </div>
+
+      <div class="meta-row">
+        <span class="priority-badge" [ngClass]="task.priority.toLowerCase()">{{ task.priority }}</span>
+        <span class="meta-item">
+          <mat-icon>event</mat-icon>
+          Due {{ task.dueDate | date:'fullDate' }}
+        </span>
+        <span class="meta-item">
+          <mat-icon>person</mat-icon>
+          Created by {{ task.createdByName }}
+        </span>
+      </div>
+
+      <div class="progress-section">
+        <div class="progress-header">
+          <span>Progress</span>
+          <span>{{ task.progressPercent }}%</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar" [style.width.%]="task.progressPercent"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Description</h2>
+        <p class="description">{{ task.description || 'No description provided.' }}</p>
+      </div>
+
+      <div class="section" *ngIf="task.assigneeNames?.length">
+        <h2>Assigned To</h2>
+        <div class="assignee-tags">
+          <span class="assignee-tag" *ngFor="let name of task.assigneeNames">
+            <mat-icon>person</mat-icon>
+            {{ name }}
+          </span>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="task.attachments?.length">
+        <h2>Attachments</h2>
+        <div class="attachment-list">
+          <a class="attachment-link" *ngFor="let file of task.attachments" [href]="file.url" target="_blank">
+            <mat-icon>attach_file</mat-icon>
+            {{ file.name }}
+          </a>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="task.completionReport">
+        <h2>Completion Report</h2>
+        <div class="completion-report">
+          <p>{{ task.completionReport.text }}</p>
+          <small>Submitted {{ task.completionReport.submittedAt | date:'medium' }}</small>
+          <div class="attachment-list" *ngIf="task.completionReport.attachments?.length">
+            <a class="attachment-link" *ngFor="let file of task.completionReport.attachments" [href]="file.url" target="_blank">
+              <mat-icon>attach_file</mat-icon>
+              {{ file.name }}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="section" *ngIf="task.lastReview">
+        <h2>Last Review</h2>
+        <div class="review-result" [ngClass]="task.lastReview.status">
+          <strong>{{ task.lastReview.status | titlecase }}</strong>
+          <p>{{ task.lastReview.notes || 'No notes provided.' }}</p>
+          <small>{{ task.lastReview.reviewedAt | date:'medium' }}</small>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SIDE PANELS -->
+
+    <div class="side-panels">
+
+      <!-- JUNIOR: PROGRESS UPDATE -->
+
+      <div class="panel progress-panel" *ngIf="canUpdateProgress && task.status !== 'under_review'">
+
+        <h2>
+          <mat-icon>trending_up</mat-icon>
+          Update Progress
+        </h2>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="progressStatus">
+            <option value="pending">Pending</option>
+            <option value="in_progress">In Progress</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Progress: {{ progressPercent }}%</label>
+          <input type="range" min="0" max="100" [(ngModel)]="progressPercent">
+        </div>
+
+        <div class="form-group">
+          <label>Upload Files</label>
+          <input type="file" (change)="onProgressFileSelected($event)">
+          <div class="mini-attachments" *ngIf="progressAttachments.length">
+            <span *ngFor="let f of progressAttachments">{{ f.name }}</span>
+          </div>
+        </div>
+
+        <button class="panel-btn primary" (click)="saveProgress()" [disabled]="saving">
+          Save Progress
+        </button>
+
+        <hr>
+
+        <div class="form-group">
+          <label>Work Update</label>
+          <textarea [(ngModel)]="workUpdateText" rows="3" placeholder="Describe what you've done..."></textarea>
+        </div>
+
+        <button class="panel-btn secondary" (click)="submitWorkUpdate()" [disabled]="saving || !workUpdateText.trim()">
+          Submit Work Update
+        </button>
+
+        <hr>
+
+        <div class="form-group">
+          <label>Completion Report</label>
+          <textarea [(ngModel)]="completionReportText" rows="4" placeholder="Summarize completed work for review..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Report Attachments</label>
+          <input type="file" (change)="onReportFileSelected($event)">
+          <div class="mini-attachments" *ngIf="reportAttachments.length">
+            <span *ngFor="let f of reportAttachments">{{ f.name }}</span>
+          </div>
+        </div>
+
+        <button class="panel-btn success" (click)="submitForReview()" [disabled]="saving || !completionReportText.trim()">
+          <mat-icon>send</mat-icon>
+          Submit for Review
+        </button>
+
+      </div>
+
+      <!-- SENIOR: REVIEW -->
+
+      <div class="panel review-panel" *ngIf="canReview">
+
+        <h2>
+          <mat-icon>rate_review</mat-icon>
+          Review Submission
+        </h2>
+
+        <p class="review-hint">Review the completion report and approve, reject, or request changes.</p>
+
+        <div class="form-group">
+          <label>Review Notes</label>
+          <textarea [(ngModel)]="reviewNotes" rows="4" placeholder="Add feedback for the assignee..."></textarea>
+        </div>
+
+        <div class="review-actions">
+          <button class="panel-btn success" (click)="reviewTask('approved')" [disabled]="saving">
+            <mat-icon>check_circle</mat-icon>
+            Approve
+          </button>
+          <button class="panel-btn warning" (click)="reviewTask('changes_requested')" [disabled]="saving">
+            <mat-icon>edit_note</mat-icon>
+            Request Changes
+          </button>
+          <button class="panel-btn danger" (click)="reviewTask('rejected')" [disabled]="saving">
+            <mat-icon>cancel</mat-icon>
+            Reject
+          </button>
+        </div>
+
+      </div>
+
+      <!-- COMMENTS -->
+
+      <div class="panel comments-panel">
+
+        <h2>
+          <mat-icon>chat</mat-icon>
+          Comments
+        </h2>
+
+        <div class="comment-form" *ngIf="canComment">
+          <textarea [(ngModel)]="commentText" rows="2" placeholder="Add a comment..."></textarea>
+          <button class="panel-btn primary small" (click)="addComment()" [disabled]="saving || !commentText.trim()">
+            Post
+          </button>
+        </div>
+
+        <p class="read-only-hint" *ngIf="!canComment">Viewers can read comments but cannot post.</p>
+
+        <div class="comments-list">
+
+          <div class="comment-item" *ngFor="let comment of comments" [class.work-update]="comment.isWorkUpdate">
+
+            <div class="comment-header">
+              <strong>{{ comment.userName }}</strong>
+              <span class="comment-badge" *ngIf="comment.isWorkUpdate">Work Update</span>
+              <small>{{ comment.createdAt | date:'short' }}</small>
+            </div>
+
+            <p>{{ comment.message }}</p>
+
+          </div>
+
+          <p class="no-comments" *ngIf="!comments.length">No comments yet.</p>
+
+        </div>
+
+      </div>
+
+      <!-- ACTIVITY TIMELINE -->
+
+      <div class="panel timeline-panel">
+
+        <h2>
+          <mat-icon>timeline</mat-icon>
+          Activity Timeline
+        </h2>
+
+        <div class="timeline">
+
+          <div class="timeline-item" *ngFor="let activity of activities">
+
+            <div class="timeline-dot"></div>
+
+            <div class="timeline-content">
+              <p>{{ activity.message }}</p>
+              <small>{{ activity.createdAt | date:'medium' }}</small>
+            </div>
+
+          </div>
+
+          <p class="no-activity" *ngIf="!activities.length">No activity yet.</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+</div>
+
+<div class="loading-state" *ngIf="loading">
+  <div class="spinner"></div>
+  <p>Loading task...</p>
+</div>

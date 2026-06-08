@@ -1,0 +1,87 @@
+<div class="task-form-page">
+
+  <div class="page-header">
+    <h1>{{ isEdit ? 'Edit Task' : 'Create Task' }}</h1>
+    <p>Assign work to team members with priority and due date.</p>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading task...</p>
+  </div>
+
+  <form class="task-form card-panel" *ngIf="!loading" (ngSubmit)="save()">
+
+    <div class="form-group">
+      <label>Title *</label>
+      <input type="text" [(ngModel)]="title" name="title" placeholder="Task title" required>
+    </div>
+
+    <div class="form-group">
+      <label>Description</label>
+      <textarea [(ngModel)]="description" name="description" rows="5" placeholder="Describe the task..."></textarea>
+    </div>
+
+    <div class="form-row">
+
+      <div class="form-group">
+        <label>Priority</label>
+        <select [(ngModel)]="priority" name="priority">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Due Date</label>
+        <input type="date" [(ngModel)]="dueDate" name="dueDate">
+      </div>
+
+    </div>
+
+    <div class="form-group">
+      <label>Assign To *</label>
+      <div class="assignee-list" *ngIf="assignableUsers.length">
+        <label
+          class="assignee-chip"
+          *ngFor="let user of assignableUsers"
+          [class.selected]="isAssigneeSelected(user.uid)">
+          <input
+            type="checkbox"
+            [checked]="isAssigneeSelected(user.uid)"
+            (change)="toggleAssignee(user.uid)">
+          <span>{{ user.name }}</span>
+          <small class="user-role">{{ getUserRoleLabel(user) }}</small>
+          <small>{{ user.email }}</small>
+        </label>
+      </div>
+      <p class="hint" *ngIf="!assignableUsers.length">No Editor or Viewer users available to assign.</p>
+    </div>
+
+    <div class="form-group">
+      <label>Attachments</label>
+      <input type="file" (change)="onFileSelected($event)">
+      <div class="attachment-list" *ngIf="attachments.length">
+        <div class="attachment-item" *ngFor="let file of attachments; let i = index">
+          <mat-icon>attach_file</mat-icon>
+          <a [href]="file.url" target="_blank">{{ file.name }}</a>
+          <button type="button" class="remove-btn" (click)="removeAttachment(i)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <div class="form-actions">
+      <button type="button" class="cancel-btn" (click)="cancel()">Cancel</button>
+      <button type="submit" class="save-btn" [disabled]="saving">
+        {{ saving ? 'Saving...' : (isEdit ? 'Update Task' : 'Create Task') }}
+      </button>
+    </div>
+
+  </form>
+
+</div>

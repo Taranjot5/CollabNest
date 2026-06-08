@@ -1,0 +1,141 @@
+<div class="task-dashboard">
+
+  <div class="dashboard-header">
+    <div>
+      <h1>Task Management</h1>
+      <p *ngIf="canManageTasks">Create, assign, and track tasks for your team. <span class="role-tag">{{ roleLabel }}</span></p>
+      <p *ngIf="!canManageTasks">View and work on tasks assigned to you. <span class="role-tag">{{ roleLabel }}</span></p>
+    </div>
+    <button class="create-btn" *ngIf="canManageTasks" (click)="createTask()">
+      <mat-icon>add_task</mat-icon>
+      Create Task
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading tasks...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- COUNTERS -->
+
+    <div class="counters-grid">
+
+      <div class="counter-card pending" (click)="statusFilter = 'pending'; onFilterChange()">
+        <span class="counter-value">{{ counters.pending }}</span>
+        <span class="counter-label">Pending</span>
+      </div>
+
+      <div class="counter-card in-progress" (click)="statusFilter = 'in_progress'; onFilterChange()">
+        <span class="counter-value">{{ counters.in_progress }}</span>
+        <span class="counter-label">In Progress</span>
+      </div>
+
+      <div class="counter-card review" (click)="statusFilter = 'under_review'; onFilterChange()">
+        <span class="counter-value">{{ counters.under_review }}</span>
+        <span class="counter-label">Under Review</span>
+      </div>
+
+      <div class="counter-card completed" (click)="statusFilter = 'completed'; onFilterChange()">
+        <span class="counter-value">{{ counters.completed }}</span>
+        <span class="counter-label">Completed</span>
+      </div>
+
+      <div class="counter-card total" (click)="statusFilter = 'all'; onFilterChange()">
+        <span class="counter-value">{{ counters.total }}</span>
+        <span class="counter-label">Total</span>
+      </div>
+
+    </div>
+
+    <!-- FILTERS -->
+
+    <div class="filters-panel">
+
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onFilterChange()">
+      </div>
+
+      <select [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
+        <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+
+      <select [(ngModel)]="priorityFilter" (ngModelChange)="onFilterChange()">
+        <option *ngFor="let opt of priorityOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+
+      <select [(ngModel)]="dueDateFilter" (ngModelChange)="onFilterChange()">
+        <option value="all">All Due Dates</option>
+        <option value="overdue">Overdue</option>
+        <option value="today">Due Today</option>
+        <option value="week">Due This Week</option>
+      </select>
+
+    </div>
+
+    <!-- TASK LIST -->
+
+    <div class="task-list" *ngIf="filteredTasks.length > 0">
+
+      <div
+        class="task-row"
+        *ngFor="let task of filteredTasks"
+        (click)="openTask(task.id)">
+
+        <div class="task-row-main">
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description | slice:0:120 }}{{ task.description.length > 120 ? '...' : '' }}</p>
+        </div>
+
+        <div class="task-row-meta">
+
+          <span class="status-badge" [ngClass]="task.status">
+            {{ getStatusLabel(task.status) }}
+          </span>
+
+          <span class="priority-badge" [ngClass]="task.priority.toLowerCase()">
+            {{ task.priority }}
+          </span>
+
+          <span class="due-date" [class.overdue]="isOverdue(task)">
+            <mat-icon>event</mat-icon>
+            {{ task.dueDate | date:'mediumDate' }}
+          </span>
+
+          <div class="progress-bar-wrap">
+            <div class="progress-bar" [style.width.%]="task.progressPercent"></div>
+          </div>
+          <span class="progress-text">{{ task.progressPercent }}%</span>
+
+          <span class="assignees" *ngIf="task.assigneeNames?.length">
+            <mat-icon>group</mat-icon>
+            {{ task.assigneeNames?.join(', ') }}
+          </span>
+
+        </div>
+
+        <mat-icon class="row-arrow">chevron_right</mat-icon>
+
+      </div>
+
+    </div>
+
+    <div class="empty-state" *ngIf="filteredTasks.length === 0">
+      <mat-icon class="empty-icon">task_alt</mat-icon>
+      <h3>No tasks found</h3>
+      <p *ngIf="searchText || statusFilter !== 'all'">Try adjusting your filters.</p>
+      <p *ngIf="!searchText && statusFilter === 'all' && canManageTasks">Create a task to get started.</p>
+      <p *ngIf="!searchText && statusFilter === 'all' && !canManageTasks">No tasks have been assigned to you yet.</p>
+      <button class="create-btn small" *ngIf="canManageTasks" (click)="createTask()">Create Task</button>
+    </div>
+
+  </ng-container>
+
+</div>

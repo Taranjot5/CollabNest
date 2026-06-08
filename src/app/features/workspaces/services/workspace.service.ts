@@ -176,6 +176,27 @@ export class WorkspaceService {
   }
 
   // =========================
+  // GET ALL WORKSPACES (ADMIN)
+  // =========================
+
+  getAllWorkspaces(): Observable<Workspace[]> {
+
+    return this.firestore
+      .collection<Workspace>('workspaces', ref =>
+        ref.orderBy('createdAt', 'desc')
+      )
+      .snapshotChanges()
+      .pipe(
+        map(actions =>
+          actions.map(a => ({
+            id: a.payload.doc.id,
+            ...(a.payload.doc.data() as Workspace)
+          }))
+        )
+      );
+  }
+
+  // =========================
   // INVITE MEMBER
   // =========================
 

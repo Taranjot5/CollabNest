@@ -9,7 +9,12 @@ import {
 } from '@angular/fire/compat/firestore';
 
 import firebase from 'firebase/compat/app';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
+import { firstValueFrom } from 'rxjs';
+
+import { UserManagementService } from './user-management.service';
+
+import { RolePermissionService } from './role-permission.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +24,9 @@ export class AuthService {
 
   constructor(
     private afAuth: AngularFireAuth,
-    private firestore: AngularFirestore
+    private firestore: AngularFirestore,
+    private userManagement: UserManagementService,
+    private rolePermission: RolePermissionService
   ) { }
 
   // =========================
@@ -45,6 +52,9 @@ export class AuthService {
 
     if (!uid) return;
 
+    const hasSuperAdmin =
+      await this.userManagement.hasSuperAdmin();
+
     await this.firestore
       .collection('users')
       .doc(uid)
@@ -63,7 +73,16 @@ export class AuthService {
 
         designation: '',
 
+        role: hasSuperAdmin ? 'member' : 'super_admin',
+
+        status: 'active',
+
+        workspaceIds: [],
+
         createdAt:
+          Date.now(),
+
+        updatedAt:
           Date.now()
 
 
@@ -128,7 +147,16 @@ export class AuthService {
 
         designation: '',
 
+        role: 'member',
+
+        status: 'active',
+
+        workspaceIds: [],
+
         createdAt:
+          Date.now(),
+
+        updatedAt:
           Date.now()
 
 
@@ -139,6 +167,24 @@ export class AuthService {
 
 
     return result;
+  }
+
+  // =========================
+  // ACTIVE USER CHECK
+  // =========================
+
+  async ensureActiveUser(uid: string): Promise<boolean> {
+
+    const profile = await firstValueFrom(
+      this.getUserById(uid).pipe(take(1))
+    );
+
+    if (!profile || !this.rolePermission.isActive(profile)) {
+      await this.logout();
+      return false;
+    }
+
+    return true;
   }
 
   // =========================

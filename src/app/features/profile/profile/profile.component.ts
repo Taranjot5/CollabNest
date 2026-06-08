@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 
 import { AuthService } from '../../../core/services/auth.service';
 
+import { RolePermissionService } from '../../../core/services/role-permission.service';
+
 import { Router } from '@angular/router';
 
 @Component({
@@ -32,9 +34,14 @@ export class ProfileComponent
 
   designation = '';
 
+  role = 'viewer';
+
+  roleLabel = 'Viewer';
+
   constructor(
     private route: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private rolePermission: RolePermissionService
   ) { }
 
   ngOnInit(): void {
@@ -99,6 +106,9 @@ export class ProfileComponent
 
         this.designation =
           user.designation || '';
+
+        this.role = this.rolePermission.normalizeRole(user.role);
+        this.roleLabel = this.rolePermission.getRoleLabel(user);
 
         this.loading = false;
       });

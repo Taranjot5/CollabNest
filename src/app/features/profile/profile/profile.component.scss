@@ -194,6 +194,35 @@ input[readonly] {
   }
 }
 
+.role-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  width: fit-content;
+
+  &.super_admin {
+    background: #fef3c7;
+    color: #b45309;
+  }
+
+  &.admin {
+    background: #ede9fe;
+    color: #7c3aed;
+  }
+
+  &.editor {
+    background: #dbeafe;
+    color: #2563eb;
+  }
+
+  &.viewer {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+}
+
 .cancel-btn {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);

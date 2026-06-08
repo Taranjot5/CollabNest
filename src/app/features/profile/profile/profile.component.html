@@ -44,6 +44,11 @@
         <span>{{ designation || 'Not added yet' }}</span>
       </div>
 
+      <div class="detail-item">
+        <label>Role</label>
+        <span class="role-badge" [ngClass]="role">{{ roleLabel }}</span>
+      </div>
+
       <button class="edit-btn" (click)="editProfile()">
         <mat-icon>edit</mat-icon>
         Edit Profile

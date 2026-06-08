@@ -1,0 +1,149 @@
+<div class="user-list-page">
+
+  <div class="page-header">
+    <div>
+      <h1>User Management</h1>
+      <p>Manage users, roles, workspace access, and account status.</p>
+    </div>
+    <div class="header-actions">
+      <button class="secondary-btn" (click)="viewPermissions()">
+        <mat-icon>security</mat-icon>
+        Role Permissions
+      </button>
+      <button class="primary-btn" (click)="createUser()">
+        <mat-icon>person_add</mat-icon>
+        Add User
+      </button>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="counters-grid">
+      <div class="counter-card total">
+        <span class="counter-value">{{ counters.total }}</span>
+        <span class="counter-label">Total Users</span>
+      </div>
+      <div class="counter-card active">
+        <span class="counter-value">{{ counters.active }}</span>
+        <span class="counter-label">Active</span>
+      </div>
+      <div class="counter-card inactive">
+        <span class="counter-value">{{ counters.inactive }}</span>
+        <span class="counter-label">Inactive</span>
+      </div>
+      <div class="counter-card role">
+        <span class="counter-value">{{ counters.super_admin }}</span>
+        <span class="counter-label">Super Admins</span>
+      </div>
+    </div>
+
+    <div class="filters-panel">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Search by name, email, or department..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="onFilterChange()">
+      </div>
+
+      <select [(ngModel)]="roleFilter" (ngModelChange)="onFilterChange()">
+        <option *ngFor="let opt of roleOptions" [value]="opt.value">{{ opt.label }}</option>
+      </select>
+
+      <select [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()">
+        <option value="all">All Statuses</option>
+        <option value="active">Active</option>
+        <option value="inactive">Inactive</option>
+      </select>
+
+      <select [(ngModel)]="workspaceFilter" (ngModelChange)="onFilterChange()">
+        <option value="all">All Workspaces</option>
+        <option *ngFor="let ws of workspaces" [value]="ws.id">{{ ws.name }}</option>
+      </select>
+    </div>
+
+    <div class="user-table" *ngIf="paginatedUsers.length > 0">
+      <div class="table-header">
+        <span>User</span>
+        <span>Role</span>
+        <span>Department</span>
+        <span>Workspaces</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+
+      <div class="user-row" *ngFor="let user of paginatedUsers">
+        <div class="user-info">
+          <div class="avatar">{{ user.name?.charAt(0)?.toUpperCase() || '?' }}</div>
+          <div>
+            <strong>{{ user.name }}</strong>
+            <p>{{ user.email }}</p>
+          </div>
+        </div>
+
+        <span class="role-badge" [ngClass]="getRoleClass(user)">
+          {{ getRoleLabel(user) }}
+        </span>
+
+        <span class="cell-text">{{ user.department || '—' }}</span>
+
+        <span class="cell-text workspaces">{{ getWorkspaceNames(user) }}</span>
+
+        <span class="status-badge" [ngClass]="user.status || 'active'">
+          {{ getStatusLabel(user) }}
+        </span>
+
+        <div class="row-actions">
+          <button class="icon-btn" title="Edit" (click)="editUser(user.uid)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            class="icon-btn"
+            [title]="user.status === 'inactive' ? 'Activate' : 'Deactivate'"
+            [disabled]="actionLoading === user.uid"
+            (click)="toggleStatus(user)">
+            <mat-icon>{{ user.status === 'inactive' ? 'person_add' : 'person_off' }}</mat-icon>
+          </button>
+          <button
+            class="icon-btn"
+            title="Reset Password"
+            [disabled]="actionLoading === user.uid"
+            (click)="resetPassword(user)">
+            <mat-icon>lock_reset</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="pagination" *ngIf="filteredUsers.length > pageSize">
+      <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">
+        Previous
+      </button>
+      <span>Page {{ currentPage }} of {{ totalPages }}</span>
+      <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">
+        Next
+      </button>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredUsers.length === 0">
+      <mat-icon class="empty-icon">group_off</mat-icon>
+      <h3>No users found</h3>
+      <p *ngIf="searchText || roleFilter !== 'all' || statusFilter !== 'all'">
+        Try adjusting your filters.
+      </p>
+      <p *ngIf="!searchText && roleFilter === 'all' && statusFilter === 'all'">
+        Add your first user to get started.
+      </p>
+      <button class="primary-btn small" (click)="createUser()">Add User</button>
+    </div>
+
+  </ng-container>
+
+</div>

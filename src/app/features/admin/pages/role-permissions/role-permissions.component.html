@@ -1,0 +1,45 @@
+<div class="role-permissions-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Role Permissions</h1>
+      <p>Overview of module access for each role in the system.</p>
+    </div>
+    <a routerLink="/admin/users" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Users
+    </a>
+  </div>
+
+  <div class="permissions-table">
+    <div class="table-header">
+      <span>Permission</span>
+      <span *ngFor="let role of roles">{{ role.label }}</span>
+    </div>
+
+    <div class="permission-row" *ngFor="let perm of permissions">
+      <div class="permission-info">
+        <strong>{{ perm.label }}</strong>
+        <p>{{ perm.description }}</p>
+      </div>
+
+      <span
+        class="access-cell"
+        *ngFor="let role of roles"
+        [class.granted]="hasPermission(role.key, perm.key)">
+        <mat-icon>{{ hasPermission(role.key, perm.key) ? 'check_circle' : 'cancel' }}</mat-icon>
+      </span>
+    </div>
+  </div>
+
+  <div class="role-legend">
+    <h3>Role Mapping</h3>
+    <ul>
+      <li><strong>Super Admin</strong> — Full system access including user management</li>
+      <li><strong>Admin / Senior</strong> — Task management, workspaces, notes, trash</li>
+      <li><strong>Editor / Junior</strong> — Work on assigned tasks, notes, workspaces</li>
+      <li><strong>Viewer / Member</strong> — View assigned tasks and notes</li>
+    </ul>
+  </div>
+
+</div>

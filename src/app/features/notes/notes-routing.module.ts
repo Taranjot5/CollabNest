@@ -11,6 +11,8 @@ import { NoteDetailsComponent } from './pages/note-details/note-details.componen
 
 import { TrashNotesComponent } from './pages/trash-notes/trash-notes.component';
 
+import { roleGuard } from '../../core/guards/role.guard';
+
 const routes: Routes = [
 
   // =========================
@@ -28,7 +30,9 @@ const routes: Routes = [
 
   {
     path: 'trash',
-    component: TrashNotesComponent
+    component: TrashNotesComponent,
+    canActivate: [roleGuard],
+    data: { permission: 'trash' }
   },
 
   // =========================

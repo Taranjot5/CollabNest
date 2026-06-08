@@ -13,19 +13,24 @@
 
       <span class="nav-section-label">Main</span>
 
-      <a mat-button routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+      <a *ngIf="canAccessDashboard" mat-button routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon>dashboard</mat-icon>
         <span>Dashboard</span>
       </a>
 
-      <a mat-button routerLink="/notes" routerLinkActive="active-link">
+      <a *ngIf="canAccessNotes" mat-button routerLink="/notes" routerLinkActive="active-link">
         <mat-icon>description</mat-icon>
         <span>Notes</span>
       </a>
 
-      <a mat-button routerLink="/workspaces" routerLinkActive="active-link">
+      <a *ngIf="canAccessWorkspaces" mat-button routerLink="/workspaces" routerLinkActive="active-link">
         <mat-icon>folder_shared</mat-icon>
         <span>Workspaces</span>
+      </a>
+
+      <a *ngIf="canAccessTasks" mat-button routerLink="/tasks" routerLinkActive="active-link">
+        <mat-icon>task_alt</mat-icon>
+        <span>Tasks</span>
       </a>
 
       <span class="nav-section-label">Collections</span>
@@ -47,14 +52,19 @@
 
       <span class="nav-section-label">System</span>
 
-      <a mat-button routerLink="/notifications" routerLinkActive="active-link">
+      <a *ngIf="canAccessNotifications" mat-button routerLink="/notifications" routerLinkActive="active-link">
         <mat-icon>notifications</mat-icon>
         <span>Notifications</span>
       </a>
 
-      <a mat-button routerLink="/notes/trash" routerLinkActive="active-link">
+      <a *ngIf="canAccessTrash" mat-button routerLink="/notes/trash" routerLinkActive="active-link">
         <mat-icon>delete</mat-icon>
         <span>Trash</span>
+      </a>
+
+      <a *ngIf="isSuperAdmin" mat-button routerLink="/admin/users" routerLinkActive="active-link">
+        <mat-icon>manage_accounts</mat-icon>
+        <span>User Management</span>
       </a>
 
       <a mat-button routerLink="/profile" routerLinkActive="active-link">
