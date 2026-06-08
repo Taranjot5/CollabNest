@@ -1,57 +1,39 @@
-<div class="recent-page">
+<div class="collection-page">
 
-  <h1 class="page-title">
-    Recent Notes
-  </h1>
+  <div class="page-header">
+    <h1>Recent Notes</h1>
+    <p>Your last 10 updated notes.</p>
+  </div>
 
-  <div
-    class="notes-grid"
-    *ngIf="recentNotes.length > 0">
+  <div class="notes-grid" *ngIf="recentNotes.length > 0">
 
     <div
       class="note-card"
-      *ngFor="let note of recentNotes">
+      *ngFor="let note of recentNotes"
+      (click)="openNote(note.id)">
 
       <div class="note-top">
-
-        <span class="category">
-          {{ note.category }}
-        </span>
-
-        <span class="priority">
-          {{ note.priority }}
-        </span>
-
+        <span class="category">{{ note.category }}</span>
+        <span class="priority" [ngClass]="note.priority?.toLowerCase()">{{ note.priority }}</span>
       </div>
 
-      <h2>
-        {{ note.title }}
-      </h2>
+      <h3>{{ note.title || 'Untitled' }}</h3>
 
-      <div
-        class="note-preview"
-        [innerHTML]="note.content">
-      </div>
+      <div class="note-preview" [innerHTML]="note.content"></div>
 
       <div class="note-footer">
-
-        <small>
-          Updated:
-          {{ note.updatedAt | date:'medium' }}
-        </small>
-
+        Updated {{ note.updatedAt | date:'medium' }}
       </div>
 
     </div>
 
   </div>
 
-  <div
-    class="empty-state"
-    *ngIf="recentNotes.length === 0">
-
-    No recent notes found.
-
+  <div class="empty-state" *ngIf="recentNotes.length === 0">
+    <mat-icon class="empty-icon">history</mat-icon>
+    <h3>No recent notes</h3>
+    <p>Notes you edit will appear here.</p>
+    <a class="link-btn" routerLink="/notes">Go to Notes</a>
   </div>
 
 </div>

@@ -12,113 +12,84 @@ import { ProfileComponent } from './features/profile/profile/profile.component';
 
 const routes: Routes = [
 
-  // =========================
-  // DEFAULT
-  // =========================
-
   {
     path: '',
     redirectTo: 'auth/login',
     pathMatch: 'full'
   },
 
-  // =========================
-  // AUTH
-  // =========================
-
   {
     path: 'auth',
-
     loadChildren: () =>
       import('./features/auth/auth.module')
         .then(m => m.AuthModule)
   },
 
-  // =========================
-  // MAIN LAYOUT
-  // =========================
-
   {
     path: '',
-
     component: MainLayoutComponent,
-
     canActivate: [authGuard],
-
     children: [
 
-      // DASHBOARD
-
       {
-        path: 'workspace',
-
+        path: 'dashboard',
         loadChildren: () =>
           import('./features/dashboard/dashboard.module')
             .then(m => m.DashboardModule)
       },
 
-      // NOTES
+      {
+        path: 'workspace',
+        redirectTo: 'dashboard',
+        pathMatch: 'prefix'
+      },
 
       {
         path: 'notes',
-
         loadChildren: () =>
           import('./features/notes/notes.module')
             .then(m => m.NotesModule)
       },
 
-      // Notifications
-
       {
         path: 'notifications',
-
         loadChildren: () =>
           import('./features/notifications/notifications.module')
             .then(m => m.NotificationsModule)
+      },
+
+      {
+        path: 'workspaces',
+        loadChildren: () =>
+          import('./features/workspaces/workspace.module')
+            .then(m => m.WorkspaceModule)
+      },
+
+      {
+        path: 'profile',
+        component: ProfileComponent
+      },
+
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
       }
     ]
   },
 
-  // =========================
-  // WORKSPACES
-  // =========================
-
-  {
-    path: 'workspaces',
-
-    loadChildren: () =>
-      import('./features/workspaces/workspace.module')
-        .then(m => m.WorkspaceModule)
-  },
-
-  // =========================
-  // PROFILE
-  // =========================
-
-  {
-    path: 'profile',
-    component: ProfileComponent
-  },
-
-  // =========================
-  // FALLBACK
-  // =========================
-
   {
     path: '**',
-    redirectTo: 'workspace'
+    redirectTo: 'dashboard'
   }
 ];
 
 @NgModule({
-
   imports: [
     RouterModule.forRoot(routes)
   ],
-
   exports: [
     RouterModule
   ]
 })
-
 export class AppRoutingModule { }

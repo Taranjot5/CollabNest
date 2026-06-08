@@ -180,6 +180,8 @@ export class NoteService {
 
       starredBy: [],
 
+      isPinned: false,
+
       isTrashed: false,
 
       trashedAt: 0,
@@ -477,6 +479,22 @@ export class NoteService {
     );
 
     alert('Collaborator added');
+  }
+  // =========================
+  // TOGGLE PIN NOTE
+  // =========================
+
+  togglePin(
+    noteId: string,
+    currentValue: boolean
+  ) {
+    return this.firestore
+      .collection('notes')
+      .doc(noteId)
+      .update({
+        isPinned: !currentValue,
+        updatedAt: Date.now()
+      });
   }
 
   // =========================

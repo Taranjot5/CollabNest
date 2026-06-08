@@ -13,6 +13,7 @@ import {
 } from './pages/workspace-list/workspace-list.component';
 import { WorkspaceDetailsComponent } from './pages/workspace-details/workspace-details.component';
 import { ActivityHistoryComponent } from './pages/activity-history/activity-history.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
 
@@ -28,7 +29,9 @@ import { ActivityHistoryComponent } from './pages/activity-history/activity-hist
 
     FormsModule,
 
-    WorkspaceRoutingModule
+    WorkspaceRoutingModule,
+
+    MatIconModule
   ]
 })
 

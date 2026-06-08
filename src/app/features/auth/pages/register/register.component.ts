@@ -78,9 +78,7 @@ export class RegisterComponent {
 
       // REDIRECT
 
-      this.router.navigate([
-        '/workspace'
-      ]);
+      this.router.navigate(['/dashboard']);
 
     } catch (error: any) {
 

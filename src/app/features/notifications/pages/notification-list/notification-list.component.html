@@ -1,91 +1,49 @@
 <div class="notifications-page">
 
-  <h1 class="page-title">
-    Notifications
-  </h1>
-
-  <!-- LOADING -->
-
-  <div
-    class="empty-state"
-    *ngIf="loading">
-
-    Loading notifications...
-
+  <div class="page-header">
+    <h1>Notifications</h1>
+    <p>Stay updated on shared notes and team activity.</p>
   </div>
 
-  <!-- EMPTY -->
-
-  <div
-    class="empty-state"
-    *ngIf="!loading && notifications.length === 0">
-
-    No notifications yet.
-
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading notifications...</p>
   </div>
 
-  <!-- NOTIFICATIONS -->
+  <div class="empty-state" *ngIf="!loading && notifications.length === 0">
+    <mat-icon class="empty-icon">notifications_none</mat-icon>
+    <h3>All caught up</h3>
+    <p>You have no notifications right now.</p>
+  </div>
 
-  <div
-    class="notifications-container"
-
-    *ngIf="notifications.length > 0">
+  <div class="notifications-container" *ngIf="!loading && notifications.length > 0">
 
     <div
       class="notification-card"
-
       *ngFor="let notification of notifications"
-
       [class.unread]="!notification.read">
 
-      <!-- TOP -->
-
-      <div class="notification-top">
-
-        <h3>
-
-          {{ notification.title }}
-
-        </h3>
-
-        <span class="time">
-
-          {{
-            notification.createdAt
-            | date:'short'
-          }}
-
-        </span>
-
+      <div class="notification-icon" [class.unread]="!notification.read">
+        <mat-icon>{{ notification.read ? 'notifications' : 'notifications_active' }}</mat-icon>
       </div>
 
-      <!-- MESSAGE -->
+      <div class="notification-body">
 
-      <p class="message">
+        <div class="notification-top">
+          <h3>{{ notification.title }}</h3>
+          <span class="time">{{ notification.createdAt | date:'short' }}</span>
+        </div>
 
-        {{ notification.message }}
+        <p class="message">{{ notification.message }}</p>
 
-      </p>
-
-      <!-- ACTIONS -->
-
-      <div class="actions">
-
-        <button
-          *ngIf="!notification.read"
-
-          (click)="markAsRead(notification.id)">
-
-          Mark as Read
-        </button>
-
-        <button
-          class="delete-btn"
-
-          (click)="deleteNotification(notification.id)">
-
-          Delete
-        </button>
+        <div class="actions">
+          <button *ngIf="!notification.read" (click)="markAsRead(notification.id)">
+            Mark as Read
+          </button>
+          <button class="delete-btn" (click)="deleteNotification(notification.id)">
+            Delete
+          </button>
+        </div>
 
       </div>
 

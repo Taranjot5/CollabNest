@@ -1,60 +1,39 @@
-<h1 class="page-title">
-  Trash Notes
-</h1>
+<div class="trash-page">
 
-<div
-  class="empty-state"
-  *ngIf="trashedNotes.length === 0">
+  <div class="page-header">
+    <h1>Trash</h1>
+    <p>Deleted notes are kept here. Restore or permanently delete them.</p>
+  </div>
 
-  No notes in trash
+  <div class="empty-state" *ngIf="trashedNotes.length === 0">
+    <mat-icon class="empty-icon">delete_outline</mat-icon>
+    <h3>Trash is empty</h3>
+    <p>Notes you delete will appear here for recovery.</p>
+  </div>
 
-</div>
+  <div class="notes-container" *ngIf="trashedNotes.length > 0">
 
-<div class="notes-container">
+    <div class="note-card" *ngFor="let note of trashedNotes">
 
-  <div
-    class="note-card"
-    *ngFor="let note of trashedNotes">
+      <div class="top-row">
+        <span class="category">{{ note.category }}</span>
+        <span class="priority" [ngClass]="note.priority?.toLowerCase()">{{ note.priority }}</span>
+      </div>
 
-    <div class="top-row">
+      <h3>{{ note.title || 'Untitled' }}</h3>
 
-      <span class="category">
-        {{ note.category }}
-      </span>
+      <div class="note-preview" [innerHTML]="note.content"></div>
 
-      <span class="priority">
-        {{ note.priority }}
-      </span>
-
-    </div>
-
-    <h3>
-      {{ note.title }}
-    </h3>
-
-    <div
-      class="note-preview"
-      [innerHTML]="note.content">
-
-    </div>
-
-    <div class="actions">
-
-      <button
-        class="restore-btn"
-        (click)="restoreNote(note.id)">
-
-        Restore
-
-      </button>
-
-      <button
-        class="delete-btn"
-        (click)="deleteForever(note.id)">
-
-        Delete Forever
-
-      </button>
+      <div class="actions">
+        <button class="restore-btn" (click)="restoreNote(note.id)">
+          <mat-icon>restore</mat-icon>
+          Restore
+        </button>
+        <button class="delete-btn" (click)="deleteForever(note.id)">
+          <mat-icon>delete_forever</mat-icon>
+          Delete Forever
+        </button>
+      </div>
 
     </div>
 

@@ -54,9 +54,12 @@ import {
 })
 export class WorkspaceDetailsComponent
   implements OnInit {
+
+  showCreateNoteModal = false;
+
   selectedVersions: any[] = [];
 
-  selectedVersionNote?: Note;
+  selectedVersionNote: Note | null = null;
 
   selectedFiles: File[] = [];
 
@@ -365,7 +368,22 @@ export class WorkspaceDetailsComponent
 
     }
 
-    return filtered;
+    return filtered.sort((a, b) => {
+
+      if (a.isPinned && !b.isPinned) {
+        return -1;
+      }
+
+      if (!a.isPinned && b.isPinned) {
+        return 1;
+      }
+
+      return (
+        new Date(b.updatedAt || '').getTime() -
+        new Date(a.updatedAt || '').getTime()
+      );
+
+    });
   }
 
 
@@ -947,5 +965,64 @@ export class WorkspaceDetailsComponent
         this.workspaceId,
         memberId
       );
+  }
+
+  getFolderNoteCount(folderId: string): number {
+    return this.notes.filter(note => note.folderId === folderId).length;
+  }
+
+  getMemberCount(): number {
+    return this.workspace?.members?.length ?? 0;
+  }
+
+  togglePin(note: Note) {
+
+    this.noteService
+      .togglePin(
+        note.id!,
+        note.isPinned || false
+      );
+
+  }
+
+
+  trackByNote(
+    index: number,
+    note: Note
+  ): string {
+
+    return note.id || index.toString();
+  }
+
+  trackByFolder(
+    index: number,
+    folder: Folder
+  ): string {
+
+    return folder.id || index.toString();
+  }
+
+  trackByMember(
+    index: number,
+    member: any
+  ): string {
+
+    return member.id || index.toString();
+  }
+
+  trackByActivity(
+    index: number,
+    activity: WorkspaceActivity
+  ): string {
+
+    return activity.id || index.toString();
+  }
+
+  trackByComment(
+    index: number,
+    comment: Comment
+  ): string {
+
+    return comment.id || index.toString();
   }
 }

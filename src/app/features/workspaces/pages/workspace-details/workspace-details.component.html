@@ -1,121 +1,211 @@
 <div class="workspace-details" *ngIf="workspace">
 
   <!-- =========================
-        HEADER
-    ========================== -->
+     WORKSPACE HERO
+========================= -->
 
-  <div class="workspace-header">
+  <div class="workspace-hero">
 
+    <div class="hero-top">
 
-    <div>
+      <button class="back-btn" routerLink="/workspaces">
 
-      <h1>
+        ← Back to Workspaces
+
+      </button>
+
+      <div class="breadcrumb">
+
+        Dashboard
+        <span>›</span>
+        Workspaces
+        <span>›</span>
         {{ workspace.name }}
-      </h1>
 
-      <p>
-        {{ workspace.description }}
-      </p>
+      </div>
 
     </div>
 
-    <button *ngIf="isOwner" class="delete-workspace-btn" (click)="deleteWorkspace()">
+    <div class="hero-content">
 
-      Delete Workspace
+      <div class="workspace-avatar">
 
-    </button>
+        {{ workspace.name.charAt(0) }}
 
+      </div>
 
-  </div>
+      <div class="workspace-info">
 
-  <!-- =========================
-        STATS
-    ========================== -->
+        <h1>
 
-  <div class="stats-grid">
+          {{ workspace.name }}
 
-    <div class="stat-card">
+        </h1>
 
-      <h2>
-        {{ workspace.members.length }}
-      </h2>
+        <p>
 
-      <span>
-        Members
-      </span>
+          {{ workspace.description }}
 
-    </div>
+        </p>
 
-    <div class="stat-card">
+        <div class="workspace-meta">
 
-      <h2>
-        {{ notes.length }}
-      </h2>
+          <span>
+            👥 {{ workspace.members.length }} Members
+          </span>
 
-      <span>
-        Notes
-      </span>
+          <span>
+            📝 {{ notes.length }} Notes
+          </span>
 
-    </div>
+          <span>
+            🛡 {{ workspace.admins.length }} Admins
+          </span>
 
-    <div class="stat-card">
+          <span>
+            📊 {{ activities.length }} Activities
+          </span>
 
-      <h2>
-        {{ workspace.admins.length }}
-      </h2>
+        </div>
 
-      <span>
-        Admins
-      </span>
+      </div>
 
-    </div>
+      <div class="hero-actions">
 
-    <div class="stat-card">
+        <button *ngIf="isAdmin" class="secondary-action">
 
-      <h2>
-        {{ starredNotes }}
-      </h2>
+          + Invite Member
 
-      <span>
-        Starred Notes
-      </span>
+        </button>
 
-    </div>
+        <button *ngIf="isOwner" class="danger-action" (click)="deleteWorkspace()">
 
-    <div class="stat-card">
+          Delete
 
-      <h2>
-        {{ recentActivities }}
-      </h2>
+        </button>
 
-      <span>
-        Activities
-      </span>
+      </div>
 
     </div>
 
   </div>
 
+  <div class="workspace-stats">
+
+    <div class="stat-card members">
+
+      <div class="stat-icon">
+        👥
+      </div>
+
+      <div class="stat-content">
+        <h3>{{ getMemberCount() }}</h3>
+        <p>Members</p>
+      </div>
+
+    </div>
+
+    <div class="stat-card notes">
+
+      <div class="stat-icon">
+        📝
+      </div>
+
+      <div class="stat-content">
+        <h3>{{ notes.length }}</h3>
+        <p>Notes</p>
+      </div>
+
+    </div>
+
+    <div class="stat-card folders">
+
+      <div class="stat-icon">
+        📁
+      </div>
+
+      <div class="stat-content">
+        <h3>{{ folders.length }}</h3>
+        <p>Folders</p>
+      </div>
+
+    </div>
+
+    <div class="stat-card activity">
+
+      <div class="stat-icon">
+        ⚡
+      </div>
+
+      <div class="stat-content">
+        <h3>{{ activities.length }}</h3>
+        <p>Activities</p>
+      </div>
+
+    </div>
+
+  </div>
 
 
   <!-- =========================
-      MEMBERS
-  ========================== -->
+     WORKSPACE TEAM HUB
+========================= -->
 
   <div class="members-section">
 
-    <h2>
-      Members
-    </h2>
+    <div class="section-header">
 
-    <div class="member-list">
+      <div>
 
+        <h2>Workspace Team</h2>
 
-      <div class="member-chip" *ngFor="let member of members">
+        <p class="section-subtitle">
 
-        <div class="member-name">
+          Collaborators working inside this workspace
 
-          {{ member?.name }}
+        </p>
+
+      </div>
+
+      <button *ngIf="isAdmin" class="invite-member-btn">
+
+        + Invite Member
+
+      </button>
+
+    </div>
+
+    <div class="members-grid">
+
+      <div class="member-card" *ngFor="let member of members">
+
+        <div class="member-top">
+
+          <div class="member-avatar">
+
+            {{ member?.name?.charAt(0) }}
+
+          </div>
+
+          <div class="member-info">
+
+            <h4>
+
+              {{ member?.name }}
+
+            </h4>
+
+            <p>
+
+              {{ member?.email }}
+
+            </p>
+
+          </div>
+
+        </div>
+
+        <div class="member-meta">
 
           <span class="role-badge">
 
@@ -123,34 +213,32 @@
 
           </span>
 
-        </div>
+          <span class="status-badge online">
 
-        <div class="member-email">
+            ● Active
 
-          {{ member?.email }}
+          </span>
 
         </div>
 
         <div class="member-actions" *ngIf="
-        isOwner &&
-        member?.id !== currentUserId
-      ">
+            isOwner &&
+            member?.id !== currentUserId
+           ">
 
           <button *ngIf="
-          getRole(member?.id)
-          === 'Member'
-        " class="admin-btn" (click)="makeAdmin(member.id)">
+          getRole(member?.id) === 'Member'
+          " class="admin-btn" (click)="makeAdmin(member.id)">
 
-            Make Admin
+            Promote
 
           </button>
 
           <button *ngIf="
-          getRole(member?.id)
-          === 'Admin'
-        " class="remove-admin-btn" (click)="removeAdmin(member.id)">
+          getRole(member?.id) === 'Admin'
+          " class="remove-admin-btn" (click)="removeAdmin(member.id)">
 
-            Remove Admin
+            Demote
 
           </button>
 
@@ -164,21 +252,35 @@
 
       </div>
 
-
     </div>
 
   </div>
 
-
   <!-- =========================
-        INVITE MEMBER
-    ========================== -->
+     INVITE PANEL
+========================= -->
 
   <div class="invite-section" *ngIf="isAdmin">
 
-    <h2>
-      Invite Member
-    </h2>
+    <div class="invite-header">
+
+      <div>
+
+        <h2>
+
+          Invite Collaborators
+
+        </h2>
+
+        <p>
+
+          Add new members to this workspace
+
+        </p>
+
+      </div>
+
+    </div>
 
     <div class="invite-box">
 
@@ -186,72 +288,125 @@
 
       <button (click)="inviteMember()">
 
-        Invite
+        Send Invitation
 
       </button>
 
     </div>
-
 
   </div>
 
   <!-- =========================
-      FOLDERS
-  ========================== -->
+     WORKSPACE NAVIGATION
+========================= -->
 
   <div class="folders-section">
 
-    <div class="section-header">
+    <div class="folders-header">
 
+      <div>
 
-      <h2>
-        Folders
-      </h2>
+        <h2>
 
-      <button class="create-folder-btn" (click)="createFolder()">
+          Workspace Structure
 
-        + New Folder
+        </h2>
+
+        <p>
+
+          Organize notes into folders
+
+        </p>
+
+      </div>
+
+      <button *ngIf="isAdmin" class="create-folder-btn" (click)="createFolder()">
+
+        + Folder
 
       </button>
 
-
     </div>
 
-    <div class="empty-state" *ngIf="folders.length === 0">
+    <div class="folder-list">
 
+      <!-- ALL NOTES -->
 
-      No folders created yet.
+      <div class="folder-card all-folder" [class.active]="!selectedFolderId" (click)="selectedFolderId = ''">
 
+        <div class="folder-info">
 
-    </div>
+          <span class="folder-icon">
 
-    <div class="folder-card" [class.active]="selectedFolderFilter === ''" (click)="filterByFolder('')">
+            📚
 
-      All Notes
+          </span>
 
-    </div>
+          <div>
 
-    <div class="folder-list" *ngIf="folders.length > 0">
+            <strong>
 
-      <div class="folder-card" *ngFor="let folder of folders">
+              All Notes
 
-        <div class="folder-name" (click)="filterByFolder(folder.id)">
+            </strong>
 
-          {{ folder.name }}
+            <small>
+
+              {{ notes.length }} notes
+
+            </small>
+
+          </div>
 
         </div>
 
-        <div class="folder-actions">
+      </div>
 
-          <button class="rename-btn" (click)="renameFolder(folder)">
+      <!-- FOLDERS -->
 
-            ✏
+      <div *ngFor="let folder of folders" class="folder-card" [class.active]="selectedFolderId === folder.id"
+        (click)="selectedFolderId = (folder.id!)">
+
+        <div class="folder-info">
+
+          <span class="folder-icon">
+
+            📁
+
+          </span>
+
+          <div>
+
+            <strong>
+
+              {{ folder.name }}
+
+            </strong>
+
+            <small class="folder-count">
+
+              {{ getFolderNoteCount(folder.id!) }} notes
+
+
+            </small>
+
+          </div>
+
+        </div>
+
+        <div class="folder-actions" *ngIf="isAdmin">
+
+          <button class="rename-btn" (click)="renameFolder(folder);
+          $event.stopPropagation()">
+
+            ✏️
 
           </button>
 
-          <button class="delete-folder-btn" (click)="deleteFolder(folder)">
+          <button class="delete-folder-btn" (click)="deleteFolder(folder);
+          $event.stopPropagation()">
 
-            🗑
+            🗑️
 
           </button>
 
@@ -259,93 +414,52 @@
 
       </div>
 
+    </div>
+
+  </div>
+
+  <div class="notes-toolbar">
+
+    <div class="toolbar-left">
+
+      <h2>
+        Workspace Notes
+      </h2>
+
+      <p>
+        Create, organize and collaborate on notes
+      </p>
+
+    </div>
+
+    <div class="toolbar-right">
+
+      <button class="new-note-btn" (click)="showCreateNoteModal = true">
+
+        + Create Note
+
+      </button>
 
     </div>
 
   </div>
 
-
   <!-- =========================
-        CREATE NOTE
-    ========================== -->
-
-  <div class="create-note-section">
-
-
-    <h2>
-      Create Workspace Note
-    </h2>
-
-    <input type="text" placeholder="Note title" [(ngModel)]="title">
-
-    <textarea placeholder="Write your note..." [(ngModel)]="content">
-  </textarea>
-
-    <select [(ngModel)]="category">
-
-      <option *ngFor="let item of categories" [value]="item">
-
-        {{ item }}
-
-      </option>
-
-    </select>
-
-    <select [(ngModel)]="priority">
-
-      <option value="Low">
-        Low
-      </option>
-
-      <option value="Medium">
-        Medium
-      </option>
-
-      <option value="High">
-        High
-      </option>
-
-    </select>
-
-    <select [(ngModel)]="selectedFolderId">
-
-      <option value="">
-        No Folder
-      </option>
-
-      <option *ngFor="let folder of folders" [value]="folder.id">
-
-
-        {{ folder.name }}
-
-
-      </option>
-
-    </select>
-
-
-    <button (click)="createNote()">
-
-      Create Note
-
-    </button>
-
-
-  </div>
-
-
-
-  <!-- =========================
-        NOTES
-    ========================== -->
+     NOTES SECTION
+========================= -->
 
   <div class="workspace-notes-section">
 
-    <div class="search-panel">
+    <div class="notes-header">
 
-      <input type="text" placeholder="Search notes..." [(ngModel)]="searchTerm">
+      <div class="notes-title">
+        <h2>Workspace Notes</h2>
+        <span>{{ filteredNotes.length }} Notes</span>
+      </div>
 
-      <div class="filters-row">
+      <div class="notes-controls">
+
+        <input type="text" placeholder="🔍 Search notes..." [(ngModel)]="searchTerm">
 
         <select [(ngModel)]="selectedCategoryFilter">
 
@@ -361,11 +475,11 @@
 
         </select>
 
-        <label class="star-filter">
+        <label class="star-toggle">
 
           <input type="checkbox" [(ngModel)]="showStarredOnly">
 
-          Starred Only
+          ⭐ Starred
 
         </label>
 
@@ -373,40 +487,51 @@
 
     </div>
 
-    <div class="section-header">
-
-      <h2>
-        Workspace Notes
-      </h2>
-
-    </div>
-
     <div class="empty-state" *ngIf="filteredNotes.length === 0">
-      No notes created yet.
+
+      No notes found.
 
     </div>
 
-    <div class="notes-grid" *ngIf="notes.length > 0">
+    <div class="notes-grid" *ngIf="filteredNotes.length > 0">
 
       <div class="note-card" *ngFor="let note of filteredNotes">
 
+        <!-- HEADER -->
+
         <div class="note-top">
 
-          <div>
+          <div class="note-main">
 
-            <h3>
-              {{ note.title }}
-            </h3>
+            <div class="note-title-row">
 
-            <span class="category">
+              <h3>
 
-              {{ note.category }}
+                {{ note.title }}
 
-            </span>
+              </h3>
 
-            <div class="folder-badge" *ngIf="note.folderId">
+              <span *ngIf="note.isPinned" class="pinned-badge">
 
-              {{ getFolderName(note.folderId) }}
+                📌 Pinned
+
+              </span>
+
+            </div>
+
+            <div class="note-meta-row">
+
+              <span class="category">
+
+                {{ note.category }}
+
+              </span>
+
+              <span class="folder-badge" *ngIf="note.folderId">
+
+                📁 {{ getFolderName(note.folderId) }}
+
+              </span>
 
             </div>
 
@@ -426,11 +551,37 @@
 
         </div>
 
+        <!-- CONTENT -->
+
         <p class="note-content">
 
           {{ note.content }}
 
         </p>
+
+        <!-- STATS -->
+
+        <div class="note-stats">
+
+          <span>
+
+            💬 {{ (comments[note.id!] || []).length }}
+
+          </span>
+
+          <span>
+
+            ⚡ {{ note.priority }}
+
+          </span>
+
+          <span>
+
+            🕒 {{ note.updatedAt | date:'short' }}
+
+          </span>
+
+        </div>
 
         <!-- COMMENTS -->
 
@@ -438,44 +589,33 @@
 
           <div class="comments-header">
 
-
-            Comments
-
             <span>
-              {{ (comments[note.id!] || []).length }}
+              Comments
             </span>
 
+            <span>
+
+              {{ (comments[note.id!] || []).length }}
+
+            </span>
 
           </div>
 
-          <!-- EXISTING COMMENTS -->
+          <div class="comment-list" *ngIf="comments[note.id!]?.length">
 
-          <div class="comment-list" *ngIf="
-        comments[note.id!]?.length
-      ">
-
-
-            <div class="comment-item" *ngFor="
-      let comment of
-      comments[note.id!]
-    ">
+            <div class="comment-item" *ngFor="let comment of comments[note.id!]">
 
               <div class="comment-top">
 
                 <strong>
 
-                  {{
-                  comment.userName
-                  }}
+                  {{ comment.userName }}
 
                 </strong>
 
                 <span>
 
-                  {{
-                  comment.createdAt
-                  | date:'short'
-                  }}
+                  {{ comment.createdAt | date:'short' }}
 
                 </span>
 
@@ -483,20 +623,12 @@
 
               <div class="comment-message">
 
-                {{
-                comment.message
-                }}
+                {{ comment.message }}
 
               </div>
 
-              <button *ngIf="
-        comment.userId ===
-        currentUserId
-      " class="delete-comment-btn" (click)="
-        deleteComment(
-          comment.id
-        )
-      ">
+              <button *ngIf="comment.userId === currentUserId" class="delete-comment-btn"
+                (click)="deleteComment(comment.id)">
 
                 Delete
 
@@ -504,84 +636,52 @@
 
             </div>
 
-
           </div>
-
-          <!-- ADD COMMENT -->
 
           <div class="comment-form">
 
+            <input type="text" placeholder="Write a comment..." [(ngModel)]="commentInputs[note.id!]"
+              (keyup.enter)="addComment(note)">
 
-            <input type="text" placeholder="Write a comment..." [(ngModel)]="
-      commentInputs[
-        note.id!
-      ]
-    " (keyup.enter)="
-      addComment(note)
-    ">
-
-            <button (click)="
-      addComment(note)
-    ">
+            <button (click)="addComment(note)">
 
               Post
 
             </button>
 
-
           </div>
 
         </div>
 
-
-        <div class="note-footer">
-
-          <span class="priority">
-
-            {{ note.priority }}
-
-          </span>
-
-          <span class="date">
-
-            {{ note.updatedAt | date:'short' }}
-
-          </span>
-
-        </div>
+        <!-- ACTIONS -->
 
         <div class="note-actions">
 
-          <div class="note-actions">
+          <button class="history-btn" (click)="showVersions(note)">
 
-            <button class="history-btn" (click)="showVersions(note)">
+            📜 History
 
+          </button>
 
-              History
+          <button class="edit-btn" (click)="editNote(note)">
 
+            ✏️ Edit
 
-            </button>
+          </button>
 
-            <button class="edit-btn" (click)="editNote(note)">
+          <button class="pin-btn" (click)="togglePin(note)">
 
+            {{ note.isPinned ? '📌 Unpin' : '📍 Pin' }}
 
-              Edit
+          </button>
 
+          <button *ngIf="isOwner" class="delete-btn" (click)="deleteNote(note.id, note.title)">
 
-            </button>
+            🗑 Delete
 
-            <button *ngIf="isOwner" class="delete-btn" (click)="deleteNote(note.id, note.title)">
-
-
-              Delete
-
-
-            </button>
-
-          </div>
+          </button>
 
         </div>
-
 
       </div>
 
@@ -591,57 +691,63 @@
 
   <div class="version-history-section" *ngIf="selectedVersionNote">
 
-    <h2>
+    <div class="version-header">
 
+      <div>
 
-      Version History:
-      {{ selectedVersionNote.title }}
+        <h2>
+          Version History
+        </h2>
 
-
-    </h2>
-
-    <div class="empty-state" *ngIf="
-      selectedVersions.length === 0
-    ">
-
-
-      No previous versions.
-
-
-    </div>
-
-    <div class="version-card" *ngFor="
-      let version
-      of selectedVersions
-    ">
-
-
-      <div class="version-date">
-
-        {{
-        version.createdAt
-        | date:'medium'
-        }}
+        <p>
+          {{ selectedVersionNote.title }}
+        </p>
 
       </div>
 
-      <h4>
+      <button class="close-history-btn" (click)="selectedVersionNote = null">
+        ✕
+      </button>
 
-        {{ version.title }}
+    </div>
 
-      </h4>
+    <div class="empty-state" *ngIf="selectedVersions.length === 0">
+      No previous versions found
+    </div>
 
-      <p>
+    <div class="timeline">
 
-        {{ version.content }}
+      <div class="timeline-item" *ngFor="let version of selectedVersions">
 
-      </p>
+        <div class="timeline-dot"></div>
 
+        <div class="timeline-card">
+
+          <div class="timeline-date">
+
+            {{ version.createdAt | date:'medium' }}
+
+          </div>
+
+          <h4>
+
+            {{ version.title }}
+
+          </h4>
+
+          <p>
+
+            {{ version.content }}
+
+          </p>
+
+        </div>
+
+      </div>
 
     </div>
 
   </div>
-
 
   <!-- =========================
         ACTIVITY HISTORY
@@ -685,3 +791,4 @@
 
 
   </div>
+</div>

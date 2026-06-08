@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
@@ -21,6 +22,7 @@ import { MatDividerModule } from '@angular/material/divider';
 
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     MatSidenavModule,
     MatToolbarModule,

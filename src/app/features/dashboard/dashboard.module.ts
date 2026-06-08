@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 import { DashboardRoutingModule } from './dashboard-routing.module';
 
@@ -15,11 +19,12 @@ import { RecentNotesComponent } from './pages/recent-notes/recent-notes.componen
     SharedNotesComponent,
     RecentNotesComponent
   ],
-
   imports: [
     CommonModule,
+    RouterModule,
+    MatIconModule,
+    MatButtonModule,
     DashboardRoutingModule
   ]
 })
-
 export class DashboardModule {}

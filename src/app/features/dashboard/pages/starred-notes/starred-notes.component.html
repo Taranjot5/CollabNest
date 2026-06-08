@@ -1,49 +1,43 @@
-<h1 class="page-title">
-  ⭐ Starred Notes
-</h1>
+<div class="collection-page">
 
-<div
-  class="notes-container"
+  <div class="page-header">
+    <h1>Starred Notes</h1>
+    <p>Your most important notes, marked with a star.</p>
+  </div>
 
-  *ngIf="starredNotes.length > 0">
-
-  <div
-    class="note-card"
-
-    *ngFor="let note of starredNotes"
-
-    (click)="openNote(note.id)">
-
-    <div class="top-row">
-
-      <span class="category">
-        {{ note.category }}
-      </span>
-
-      <span class="priority">
-        {{ note.priority }}
-      </span>
-
-    </div>
-
-    <h3>
-      {{ note.title }}
-    </h3>
+  <div class="notes-grid" *ngIf="starredNotes.length > 0">
 
     <div
-      class="note-preview"
+      class="note-card starred"
+      *ngFor="let note of starredNotes"
+      (click)="openNote(note.id)">
 
-      [innerHTML]="note.content">
+      <div class="note-top">
+        <span class="category">{{ note.category }}</span>
+        <span class="priority" [ngClass]="note.priority?.toLowerCase()">{{ note.priority }}</span>
+      </div>
+
+      <div class="star-indicator">
+        <mat-icon>star</mat-icon>
+      </div>
+
+      <h3>{{ note.title || 'Untitled' }}</h3>
+
+      <div class="note-preview" [innerHTML]="note.content"></div>
+
+      <div class="note-footer">
+        Updated {{ note.updatedAt | date:'medium' }}
+      </div>
+
     </div>
 
   </div>
 
-</div>
+  <div class="empty-state" *ngIf="starredNotes.length === 0">
+    <mat-icon class="empty-icon">star_border</mat-icon>
+    <h3>No starred notes</h3>
+    <p>Star notes from your notes list to find them quickly here.</p>
+    <a class="link-btn" routerLink="/notes">Go to Notes</a>
+  </div>
 
-<div
-  class="empty-state"
-
-  *ngIf="starredNotes.length === 0">
-
-  No starred notes yet.
 </div>

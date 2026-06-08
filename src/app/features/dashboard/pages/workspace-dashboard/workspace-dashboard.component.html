@@ -1,5 +1,199 @@
-<h1>Workspace Dashboard</h1>
+<div class="dashboard">
 
-<p>
-  Authentication and routing are working successfully.
-</p>
+  <!-- HEADER -->
+
+  <div class="dashboard-header">
+
+    <div>
+      <h1>{{ getGreeting() }}, {{ userName }}!</h1>
+      <p>Here's an overview of your knowledge hub.</p>
+    </div>
+
+    <div class="header-actions">
+
+      <a class="action-btn primary" routerLink="/notes">
+        <mat-icon>add</mat-icon>
+        New Note
+      </a>
+
+      <a class="action-btn secondary" routerLink="/workspaces">
+        <mat-icon>folder_shared</mat-icon>
+        Workspaces
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- LOADING -->
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading your dashboard...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <!-- STATS -->
+
+    <div class="stats-grid">
+
+      <a class="stat-card" routerLink="/notes">
+        <div class="stat-icon notes">
+          <mat-icon>description</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalNotes }}</span>
+          <span class="stat-label">Total Notes</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/dashboard/starred">
+        <div class="stat-icon starred">
+          <mat-icon>star</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.starredNotes }}</span>
+          <span class="stat-label">Starred</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/workspaces">
+        <div class="stat-icon workspaces">
+          <mat-icon>folder_shared</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.workspaces }}</span>
+          <span class="stat-label">Workspaces</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/notifications">
+        <div class="stat-icon notifications">
+          <mat-icon>notifications</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.unreadNotifications }}</span>
+          <span class="stat-label">Unread Alerts</span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- QUICK LINKS -->
+
+    <div class="quick-links">
+
+      <a routerLink="/dashboard/recent" class="quick-link">
+        <mat-icon>history</mat-icon>
+        <span>Recent</span>
+      </a>
+
+      <a routerLink="/dashboard/shared" class="quick-link">
+        <mat-icon>groups</mat-icon>
+        <span>Shared</span>
+        <span class="badge" *ngIf="stats.sharedNotes">{{ stats.sharedNotes }}</span>
+      </a>
+
+      <a routerLink="/notes/trash" class="quick-link">
+        <mat-icon>delete</mat-icon>
+        <span>Trash</span>
+        <span class="badge muted" *ngIf="stats.trashNotes">{{ stats.trashNotes }}</span>
+      </a>
+
+      <a routerLink="/profile" class="quick-link">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </a>
+
+    </div>
+
+    <!-- CONTENT GRID -->
+
+    <div class="content-grid">
+
+      <!-- RECENT NOTES -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+          <h2>Recent Notes</h2>
+          <a routerLink="/dashboard/recent">View all</a>
+        </div>
+
+        <div class="note-list" *ngIf="recentNotes.length > 0">
+
+          <div
+            class="note-row"
+            *ngFor="let note of recentNotes"
+            (click)="openNote(note.id)">
+
+            <div class="note-row-icon">
+              <mat-icon>description</mat-icon>
+            </div>
+
+            <div class="note-row-content">
+              <h3>{{ note.title || 'Untitled' }}</h3>
+              <span>{{ note.updatedAt | date:'mediumDate' }} · {{ note.category }}</span>
+            </div>
+
+            <mat-icon class="note-row-arrow">chevron_right</mat-icon>
+
+          </div>
+
+        </div>
+
+        <div class="empty-state compact" *ngIf="recentNotes.length === 0">
+          <mat-icon class="empty-icon">note_add</mat-icon>
+          <h3>No notes yet</h3>
+          <p>Create your first note to get started.</p>
+          <a class="action-btn primary small" routerLink="/notes">Create Note</a>
+        </div>
+
+      </section>
+
+      <!-- WORKSPACES -->
+
+      <section class="panel">
+
+        <div class="panel-header">
+          <h2>Your Workspaces</h2>
+          <a routerLink="/workspaces">View all</a>
+        </div>
+
+        <div class="workspace-list" *ngIf="workspaces.length > 0">
+
+          <div
+            class="workspace-row"
+            *ngFor="let ws of workspaces"
+            (click)="openWorkspace(ws.id)">
+
+            <div class="workspace-avatar">
+              {{ ws.name.charAt(0).toUpperCase() }}
+            </div>
+
+            <div class="workspace-row-content">
+              <h3>{{ ws.name }}</h3>
+              <span>{{ ws.members?.length || 0 }} members</span>
+            </div>
+
+            <mat-icon class="note-row-arrow">chevron_right</mat-icon>
+
+          </div>
+
+        </div>
+
+        <div class="empty-state compact" *ngIf="workspaces.length === 0">
+          <mat-icon class="empty-icon">folder_open</mat-icon>
+          <h3>No workspaces</h3>
+          <p>Collaborate with your team in a workspace.</p>
+          <a class="action-btn primary small" routerLink="/workspaces">Create Workspace</a>
+        </div>
+
+      </section>
+
+    </div>
+
+  </ng-container>
+
+</div>

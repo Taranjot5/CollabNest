@@ -1,257 +1,174 @@
-<h1 class="page-title">
-  Knowledge Hub
-</h1>
+<div class="notes-page">
 
-<!-- ========================= -->
-<!-- CREATE NOTE -->
-<!-- ========================= -->
-
-<div class="create-note">
-
-  <input
-    type="text"
-    placeholder="Title"
-    [(ngModel)]="title">
-
-  <quill-editor
-    [(ngModel)]="content"
-    placeholder="Write your note..."
-    class="editor">
-
-  </quill-editor>
-
-  <div class="selectors">
-
-    <select [(ngModel)]="category">
-
-      <option value="Work">Work</option>
-
-      <option value="Study">Study</option>
-
-      <option value="Personal">Personal</option>
-
-      <option value="Ideas">Ideas</option>
-
-    </select>
-
-    <select [(ngModel)]="priority">
-
-      <option value="High">High</option>
-
-      <option value="Medium">Medium</option>
-
-      <option value="Low">Low</option>
-
-    </select>
-
+  <div class="page-header">
+    <h1>My Notes</h1>
+    <p>Create, organize, and share your personal notes.</p>
   </div>
 
-  <button (click)="createNote()">
+  <!-- CREATE NOTE -->
 
-    Create Note
+  <div class="create-note card-panel">
 
-  </button>
+    <h2 class="panel-title">
+      <mat-icon>add_circle</mat-icon>
+      Create New Note
+    </h2>
 
-</div>
+    <input
+      type="text"
+      placeholder="Note title..."
+      [(ngModel)]="title"
+      class="title-input">
 
-<!-- ========================= -->
-<!-- TOOLBAR -->
-<!-- ========================= -->
+    <quill-editor
+      [(ngModel)]="content"
+      placeholder="Write your note..."
+      class="editor">
+    </quill-editor>
 
-<div class="toolbar">
+    <div class="selectors">
 
-  <input
-    type="text"
-    placeholder="Search notes..."
-    [(ngModel)]="searchText"
-    class="search-input">
+      <div class="select-group">
+        <label>Category</label>
+        <select [(ngModel)]="category">
+          <option value="Work">Work</option>
+          <option value="Study">Study</option>
+          <option value="Personal">Personal</option>
+          <option value="Ideas">Ideas</option>
+        </select>
+      </div>
 
-  <select [(ngModel)]="selectedCategory">
-
-    <option value="All">
-      All Categories
-    </option>
-
-    <option
-      *ngFor="let cat of categories"
-      [value]="cat">
-
-      {{ cat }}
-
-    </option>
-
-  </select>
-
-</div>
-
-<!-- ========================= -->
-<!-- STARRED NOTES -->
-<!-- ========================= -->
-
-<div
-class="section-title"
-*ngIf="filteredStarredNotes.length">
-
-  ⭐ Starred Notes
-
-</div>
-
-<div class="notes-container">
-
-  <div
-    class="note-card starred-card"
-    *ngFor="let note of filteredStarredNotes"
-    (click)="openNote(note.id)">
-
-    <div class="top-row">
-
-      <span class="category">
-
-        {{ note.category }}
-
-      </span>
-
-      <span
-        class="priority"
-        [ngClass]="note.priority.toLowerCase()">
-
-        {{ note.priority }}
-
-      </span>
+      <div class="select-group">
+        <label>Priority</label>
+        <select [(ngModel)]="priority">
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
 
     </div>
 
-    <button
-      class="star-btn active"
-      (click)="toggleStar(note); $event.stopPropagation()">
-
-      ⭐
-
-    </button>
-
-    <h3>
-
-      {{ note.title }}
-
-    </h3>
-
-    <div
-      class="note-preview"
-      [innerHTML]="note.content">
-
-    </div>
-
-    <div
-      class="share-box"
-      (click)="$event.stopPropagation()">
-
-      <input
-        #starEmailInput
-        type="email"
-        placeholder="Collaborator Email">
-
-      <button
-        (click)="shareNote(note.id, starEmailInput.value)">
-
-        Share
-
-      </button>
-
-    </div>
-
-    <button
-      class="delete-btn"
-      (click)="deleteNote($event, note.id)">
-
-      Delete
-
+    <button class="create-btn" (click)="createNote()">
+      <mat-icon>note_add</mat-icon>
+      Create Note
     </button>
 
   </div>
 
-</div>
+  <!-- TOOLBAR -->
 
-<!-- ========================= -->
-<!-- NORMAL NOTES -->
-<!-- ========================= -->
+  <div class="toolbar card-panel">
 
-<div class="section-title">
-
-  All Notes
-
-</div>
-
-<div class="notes-container">
-
-  <div
-    class="note-card"
-    *ngFor="let note of filteredNormalNotes"
-    (click)="openNote(note.id)">
-
-    <div class="top-row">
-
-      <span class="category">
-
-        {{ note.category }}
-
-      </span>
-
-      <span
-        class="priority"
-        [ngClass]="note.priority.toLowerCase()">
-
-        {{ note.priority }}
-
-      </span>
-
-    </div>
-
-    <button
-      class="star-btn"
-      (click)="toggleStar(note); $event.stopPropagation()">
-
-      ☆
-
-    </button>
-
-    <h3>
-
-      {{ note.title }}
-
-    </h3>
-
-    <div
-      class="note-preview"
-      [innerHTML]="note.content">
-
-    </div>
-
-    <div
-      class="share-box"
-      (click)="$event.stopPropagation()">
-
+    <div class="search-box">
+      <mat-icon>search</mat-icon>
       <input
-        #emailInput
-        type="email"
-        placeholder="Collaborator Email">
+        type="text"
+        placeholder="Search notes..."
+        [(ngModel)]="searchText"
+        class="search-input">
+    </div>
+
+    <select [(ngModel)]="selectedCategory" class="category-filter">
+      <option value="All">All Categories</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+
+  </div>
+
+  <!-- STARRED NOTES -->
+
+  <div class="section-header" *ngIf="filteredStarredNotes.length">
+    <mat-icon>star</mat-icon>
+    <h2>Starred Notes</h2>
+    <span class="count">{{ filteredStarredNotes.length }}</span>
+  </div>
+
+  <div class="notes-container" *ngIf="filteredStarredNotes.length">
+
+    <div
+      class="note-card starred-card"
+      *ngFor="let note of filteredStarredNotes"
+      (click)="openNote(note.id)">
+
+      <div class="top-row">
+        <span class="category">{{ note.category }}</span>
+        <span class="priority" [ngClass]="note.priority.toLowerCase()">{{ note.priority }}</span>
+      </div>
 
       <button
-        (click)="shareNote(note.id, emailInput.value)">
+        class="star-btn active"
+        (click)="toggleStar(note); $event.stopPropagation()">
+        <mat-icon>star</mat-icon>
+      </button>
 
-        Share
+      <h3>{{ note.title }}</h3>
 
+      <div class="note-preview" [innerHTML]="note.content"></div>
+
+      <div class="share-box" (click)="$event.stopPropagation()">
+        <input #starEmailInput type="email" placeholder="Collaborator email">
+        <button class="share-btn" (click)="shareNote(note.id, starEmailInput.value)">Share</button>
+      </div>
+
+      <button class="delete-btn" (click)="deleteNote($event, note.id)">
+        <mat-icon>delete</mat-icon>
+        Delete
       </button>
 
     </div>
 
-    <button
-      class="delete-btn"
-      (click)="deleteNote($event, note.id)">
+  </div>
 
-      Delete
+  <!-- ALL NOTES -->
 
-    </button>
+  <div class="section-header">
+    <mat-icon>description</mat-icon>
+    <h2>All Notes</h2>
+    <span class="count">{{ filteredNormalNotes.length }}</span>
+  </div>
 
+  <div class="notes-container" *ngIf="filteredNormalNotes.length">
+
+    <div
+      class="note-card"
+      *ngFor="let note of filteredNormalNotes"
+      (click)="openNote(note.id)">
+
+      <div class="top-row">
+        <span class="category">{{ note.category }}</span>
+        <span class="priority" [ngClass]="note.priority.toLowerCase()">{{ note.priority }}</span>
+      </div>
+
+      <button
+        class="star-btn"
+        (click)="toggleStar(note); $event.stopPropagation()">
+        <mat-icon>star_border</mat-icon>
+      </button>
+
+      <h3>{{ note.title }}</h3>
+
+      <div class="note-preview" [innerHTML]="note.content"></div>
+
+      <div class="share-box" (click)="$event.stopPropagation()">
+        <input #emailInput type="email" placeholder="Collaborator email">
+        <button class="share-btn" (click)="shareNote(note.id, emailInput.value)">Share</button>
+      </div>
+
+      <button class="delete-btn" (click)="deleteNote($event, note.id)">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="empty-state" *ngIf="!filteredStarredNotes.length && !filteredNormalNotes.length">
+    <mat-icon class="empty-icon">note_add</mat-icon>
+    <h3>No notes found</h3>
+    <p *ngIf="searchText">Try adjusting your search or filters.</p>
+    <p *ngIf="!searchText">Create your first note above to get started.</p>
   </div>
 
 </div>

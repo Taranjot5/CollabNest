@@ -13,6 +13,7 @@ import { NoteEditorComponent } from './pages/notes-editor/notes-editor.component
 import { NoteDetailsComponent } from './pages/note-details/note-details.component';
 
 import { QuillModule } from 'ngx-quill';
+import { MatIconModule } from '@angular/material/icon';
 import { TrashNotesComponent } from './pages/trash-notes/trash-notes.component';
 
 @NgModule({
@@ -35,7 +36,9 @@ import { TrashNotesComponent } from './pages/trash-notes/trash-notes.component';
 
     NotesRoutingModule,
 
-    QuillModule.forRoot()
+    QuillModule.forRoot(),
+
+    MatIconModule
   ]
 })
 

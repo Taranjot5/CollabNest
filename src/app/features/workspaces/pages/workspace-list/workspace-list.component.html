@@ -1,64 +1,69 @@
 <div class="workspace-page">
 
-  <h1 class="page-title">
-    Workspaces
-  </h1>
+  <div class="page-header">
+    <h1>Workspaces</h1>
+    <p>Create and manage team workspaces for collaborative knowledge sharing.</p>
+  </div>
 
-  <!-- CREATE -->
+  <div class="create-workspace card-panel">
 
-  <div class="create-workspace">
+    <h2 class="panel-title">
+      <mat-icon>add_business</mat-icon>
+      Create Workspace
+    </h2>
 
     <input
       type="text"
-      placeholder="Workspace Name"
+      placeholder="Workspace name"
       [(ngModel)]="workspaceName">
 
     <textarea
-      placeholder="Description"
-      [(ngModel)]="workspaceDescription">
+      placeholder="Describe what this workspace is for..."
+      [(ngModel)]="workspaceDescription"
+      rows="3">
     </textarea>
 
-    <button
-      (click)="createWorkspace()">
-
-      {{
-        loading
-        ? 'Creating...'
-        : 'Create Workspace'
-      }}
-
+    <button class="create-btn" (click)="createWorkspace()" [disabled]="loading">
+      <mat-icon>add</mat-icon>
+      {{ loading ? 'Creating...' : 'Create Workspace' }}
     </button>
 
   </div>
 
-  <!-- LIST -->
+  <div class="section-header" *ngIf="workspaces.length">
+    <mat-icon>folder_shared</mat-icon>
+    <h2>Your Workspaces</h2>
+    <span class="count">{{ workspaces.length }}</span>
+  </div>
 
-  <div class="workspace-grid">
+  <div class="workspace-grid" *ngIf="workspaces.length">
 
     <div
       class="workspace-card"
-
       *ngFor="let workspace of workspaces"
-
       (click)="openWorkspace(workspace.id)">
 
-      <h2>
-        {{ workspace.name }}
-      </h2>
+      <div class="workspace-avatar">
+        {{ workspace.name.charAt(0).toUpperCase() }}
+      </div>
 
-      <p>
-        {{ workspace.description }}
-      </p>
+      <h2>{{ workspace.name }}</h2>
+
+      <p>{{ workspace.description || 'No description' }}</p>
 
       <div class="meta">
-
-        Members:
-        {{ workspace.members.length }}
-
+        <mat-icon>group</mat-icon>
+        {{ workspace.members.length }} members
       </div>
 
     </div>
 
+  </div>
+
+  <div class="empty-state" *ngIf="!workspaces.length && !loading">
+    <mat-icon class="empty-icon">folder_open</mat-icon>
+    <h3>No workspaces yet</h3>
+    <p>Create a workspace to collaborate with your team.</p>
   </div>
 
 </div>

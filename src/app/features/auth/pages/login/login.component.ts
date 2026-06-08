@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit {
         password
       );
 
-      this.router.navigate(['/workspace']);
+      this.router.navigate(['/dashboard']);
 
     } catch (error: any) {
 
@@ -83,7 +83,7 @@ export class LoginComponent implements OnInit {
 
       await this.authService.googleLogin();
 
-      this.router.navigate(['/workspace']);
+      this.router.navigate(['/dashboard']);
 
     } catch (error: any) {
 

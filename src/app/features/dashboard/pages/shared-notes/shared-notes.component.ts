@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
+import { Router } from '@angular/router';
+
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
 import { NoteService } from '../../../../core/services/note.service';
@@ -11,7 +13,6 @@ import { Note } from '../../../notes/models/note.model';
   templateUrl: './shared-notes.component.html',
   styleUrls: ['./shared-notes.component.scss']
 })
-
 export class SharedNotesComponent implements OnInit {
 
   sharedNotes: Note[] = [];
@@ -20,45 +21,39 @@ export class SharedNotesComponent implements OnInit {
 
   constructor(
     private noteService: NoteService,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-
     this.loadCurrentUser();
   }
 
-  // =========================
-  // LOAD CURRENT USER
-  // =========================
-
-  loadCurrentUser() {
+  loadCurrentUser(): void {
 
     this.afAuth.authState.subscribe(user => {
 
       if (user) {
-
         this.currentUserId = user.uid;
-
         this.loadSharedNotes();
       }
     });
   }
 
-  // =========================
-  // LOAD SHARED NOTES
-  // =========================
+  loadSharedNotes(): void {
 
-  loadSharedNotes() {
+    this.noteService.getNotes().subscribe(notes => {
 
-    this.noteService
-      .getNotes()
-      .subscribe(notes => {
+      this.sharedNotes = notes.filter(
+        note => note.createdBy !== this.currentUserId
+      );
+    });
+  }
 
-        this.sharedNotes = notes.filter(note =>
+  openNote(id?: string): void {
 
-          note.createdBy !== this.currentUserId
-        );
-      });
+    if (!id) return;
+
+    this.router.navigate(['/notes', id]);
   }
 }

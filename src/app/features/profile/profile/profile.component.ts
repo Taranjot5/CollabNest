@@ -156,7 +156,7 @@ export class ProfileComponent
       this.saving = false;
     }
 
-    this.route.navigate(['/workspace']);
+    this.route.navigate(['/dashboard']);
 
   }
 }

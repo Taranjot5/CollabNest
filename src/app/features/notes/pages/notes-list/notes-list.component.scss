@@ -1,186 +1,233 @@
-.page-title {
-  text-align: center;
-  margin: 20px 0;
-  font-size: 36px;
-  font-weight: 700;
-  color: #1e293b;
+.notes-page {
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* =========================
-   CREATE NOTE
-========================= */
+.card-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+
+  mat-icon {
+    color: var(--color-primary);
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
 
 .create-note {
-  width: 70%;
-  margin: auto;
   display: flex;
   flex-direction: column;
-  gap: 15px;
-
-  background: #ffffff;
-  padding: 25px;
-  border-radius: 20px;
-
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.06);
+  gap: 14px;
 }
 
-.create-note input,
-.create-note textarea,
-select {
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
+.title-input {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
   font-size: 16px;
+  font-weight: 600;
   outline: none;
-  transition: 0.3s;
-}
+  transition: border-color var(--transition);
 
-.create-note input:focus,
-.create-note textarea:focus,
-select:focus {
-  border-color: #1976d2;
-}
-
-.create-note textarea {
-  min-height: 120px;
-}
-
-button {
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-}
-
-.create-note button {
-  background: #1976d2;
-  color: white;
-}
-
-.create-note button:hover {
-  background: #1565c0;
+  &:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
 }
 
 .editor {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
-/* =========================
-   TOOLBAR
-========================= */
+.selectors {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 140px;
+
+  label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  select {
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+    font-size: 14px;
+    outline: none;
+    background: white;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
+}
+
+.create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    background: var(--color-primary-dark);
+  }
+}
 
 .toolbar {
-  width: 70%;
-  margin: 30px auto;
   display: flex;
-  gap: 15px;
+  gap: 12px;
+  align-items: center;
 }
 
-.search-input {
+.search-box {
   flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 42px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  mat-icon {
+    color: var(--color-text-muted);
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    width: 100%;
+  }
 }
 
-/* =========================
-   NOTES GRID
-========================= */
+.category-filter {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  font-size: 14px;
+  outline: none;
+  background: white;
+  min-width: 160px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 16px;
+
+  mat-icon {
+    color: var(--color-primary);
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  .count {
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+}
 
 .notes-container {
-  width: 90%;
-  margin: auto;
-
   display: grid;
-
-  grid-template-columns:
-    repeat(auto-fill, minmax(320px, 1fr));
-
-  gap: 25px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
 }
-
-/* =========================
-   NOTE CARD
-========================= */
 
 .note-card {
   position: relative;
-
-  background: white;
-
+  background: var(--color-surface);
   padding: 20px;
-
-  border-radius: 18px;
-
-  box-shadow:
-    0 6px 20px rgba(0,0,0,0.08);
-
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
 
-  transition: 0.3s;
-
-  border: 2px solid transparent;
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
 }
-
-.note-card:hover {
-  transform: translateY(-5px);
-}
-
-/* =========================
-   STARRED NOTE
-========================= */
 
 .starred-card {
-
-  border: 2px solid #facc15;
-
-  background:
-    linear-gradient(
-      to bottom right,
-      #fffdf5,
-      #ffffff
-    );
-
-  box-shadow:
-    0 10px 30px rgba(250, 204, 21, 0.25);
+  border-color: #fbbf24;
+  background: linear-gradient(to bottom right, #fffdf5, #ffffff);
 }
-
-.starred-badge {
-
-  position: absolute;
-
-  top: 15px;
-  right: 15px;
-
-  background: #facc15;
-
-  color: #111827;
-
-  font-size: 12px;
-
-  padding: 5px 10px;
-
-  border-radius: 20px;
-
-  font-weight: 700;
-}
-
-/* =========================
-   TOP ROW
-========================= */
 
 .top-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .category {
-  background: #e3f2fd;
-  color: #1976d2;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
@@ -188,139 +235,120 @@ button {
 }
 
 .priority {
-  background: #fff3e0;
-  color: #ef6c00;
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-}
 
-/* =========================
-   STAR BUTTON
-========================= */
+  &.high { background: #fef2f2; color: #dc2626; }
+  &.medium { background: #fff7ed; color: #ea580c; }
+  &.low { background: #f0fdf4; color: #16a34a; }
+}
 
 .star-btn {
-
   background: transparent;
-
   border: none;
-
-  font-size: 28px;
-
   cursor: pointer;
-
-  margin-bottom: 10px;
-
   padding: 0;
+  margin-bottom: 6px;
+  display: flex;
 
-  transition: 0.2s;
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #d1d5db;
+    transition: color var(--transition);
+  }
+
+  &.active mat-icon,
+  &:hover mat-icon {
+    color: #f59e0b;
+  }
 }
-
-.star-btn:hover {
-  transform: scale(1.15);
-}
-
-/* =========================
-   NOTE CONTENT
-========================= */
 
 .note-card h3 {
-  margin: 10px 0;
-  color: #111827;
+  margin: 0 0 8px;
+  font-size: 16px;
+  color: var(--color-text);
 }
 
 .note-preview {
-  max-height: 120px;
+  max-height: 100px;
   overflow: hidden;
-
-  color: #444;
-
+  color: var(--color-text-muted);
   font-size: 14px;
-
-  margin-top: 10px;
-
   line-height: 1.5;
 }
 
-.note-preview p {
-  margin: 0;
+.share-box {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border);
+    font-size: 13px;
+    outline: none;
+
+    &:focus {
+      border-color: var(--color-primary);
+    }
+  }
 }
 
-.note-preview img {
-  max-width: 100%;
-  border-radius: 8px;
-}
+.share-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-success);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 
-/* =========================
-   BUTTONS
-========================= */
+  &:hover {
+    background: #059669;
+  }
+}
 
 .delete-btn {
-  margin-top: 15px;
-  background: crimson;
-  color: white;
-  width: 100%;
-}
-
-.delete-btn:hover {
-  background: #b00020;
-}
-
-/* =========================
-   SHARE BOX
-========================= */
-
-.share-box {
-
   display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: #fef2f2;
+  color: var(--color-danger);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
 
-  gap: 10px;
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
 
-  margin-top: 15px;
+  &:hover {
+    background: #fee2e2;
+  }
 }
-
-.share-box input {
-
-  flex: 1;
-
-  padding: 10px;
-
-  border-radius: 10px;
-
-  border: 1px solid #d1d5db;
-}
-
-.share-box button {
-
-  background: #10b981;
-
-  color: white;
-
-  padding: 10px 16px;
-}
-
-.share-box button:hover {
-  background: #059669;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
 
 @media (max-width: 768px) {
-
-  .create-note,
-  .toolbar {
-    width: 95%;
-  }
-
-  .notes-container {
-    width: 95%;
-  }
-
   .toolbar {
     flex-direction: column;
+  }
+
+  .category-filter {
+    width: 100%;
   }
 
   .share-box {

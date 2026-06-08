@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
@@ -45,6 +45,7 @@ export class NotesListComponent implements OnInit {
   constructor(
     private noteService: NoteService,
     private router: Router,
+    private route: ActivatedRoute,
     private afAuth: AngularFireAuth
   ) { }
 
@@ -102,6 +103,13 @@ export class NotesListComponent implements OnInit {
   // =========================
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+
+      if (params['q']) {
+        this.searchText = params['q'];
+      }
+    });
 
     this.loadCurrentUser();
 

@@ -25,6 +25,7 @@ import {
   AngularFireStorageModule
 }
   from '@angular/fire/compat/storage';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
 
@@ -54,6 +55,8 @@ import {
     AngularFireAuthModule,
 
     AngularFirestoreModule,
+
+    MatIconModule,
 
     QuillModule.forRoot({
 
