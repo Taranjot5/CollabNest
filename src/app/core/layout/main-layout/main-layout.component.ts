@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { Router, NavigationEnd } from '@angular/router';
 
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, take, takeUntil } from 'rxjs/operators';
 
 import { Subject } from 'rxjs';
 
@@ -12,7 +12,17 @@ import { AuthService } from '../../services/auth.service';
 
 import { RolePermissionService } from '../../services/role-permission.service';
 
+import { NotificationService } from '../../services/notification.service';
+
+import { WorkspaceService } from '../../../features/workspaces/services/workspace.service';
+
+import { WorkspaceContextService } from '../../services/workspace-context.service';
+
+import { ThemeService } from '../../services/theme.service';
+
 import { AppUser } from '../../../models/user.model';
+
+import { Workspace } from '../../../features/workspaces/models/workspace.model';
 
 @Component({
   selector: 'app-main-layout',
@@ -26,6 +36,14 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
   pageTitle = 'Knowledge Hub';
 
   userProfile: AppUser | null = null;
+
+  workspaces: Workspace[] = [];
+
+  activeWorkspace: Workspace | null = null;
+
+  unreadCount = 0;
+
+  isDarkTheme = false;
 
   canAccessDashboard = true;
 
@@ -55,13 +73,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
     '/tasks': 'Tasks',
     '/tasks/new': 'Create Task',
     '/profile': 'Profile',
+    '/search': 'Search',
     '/admin/users': 'User Management',
-    '/admin/roles': 'Role Permissions'
+    '/admin/roles': 'Role Permissions',
+    '/admin/audit-logs': 'Audit Logs'
   };
 
   constructor(
     private authService: AuthService,
     private rolePermission: RolePermissionService,
+    private notificationService: NotificationService,
+    private workspaceService: WorkspaceService,
+    private workspaceContext: WorkspaceContextService,
+    private themeService: ThemeService,
     private afAuth: AngularFireAuth,
     private router: Router
   ) {
@@ -74,12 +98,31 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
 
+    this.themeService.theme$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(theme => {
+      this.isDarkTheme = theme === 'dark';
+    });
+
+    this.workspaceContext.activeWorkspace$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(ws => {
+      this.activeWorkspace = ws;
+    });
+
+    this.notificationService.getUnreadCount().pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(count => {
+      this.unreadCount = count;
+    });
+
     this.afAuth.authState.pipe(
       takeUntil(this.destroy$)
     ).subscribe(user => {
 
       if (!user) {
         this.userProfile = null;
+        this.workspaces = [];
         return;
       }
 
@@ -89,7 +132,42 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         this.userProfile = profile;
         this.updateNavPermissions(profile);
       });
+
+      this.workspaceService.getUserWorkspaces().pipe(
+        takeUntil(this.destroy$)
+      ).subscribe(workspaces => {
+        this.workspaces = workspaces;
+        this.restoreActiveWorkspace(workspaces);
+      });
     });
+  }
+
+  restoreActiveWorkspace(workspaces: Workspace[]): void {
+
+    const storedId = this.workspaceContext.getStoredWorkspaceId();
+
+    if (!storedId) return;
+
+    const match = workspaces.find(w => w.id === storedId);
+
+    if (match) {
+      this.workspaceContext.setActiveWorkspace(match);
+    }
+  }
+
+  switchWorkspace(workspace: Workspace | null): void {
+    this.workspaceContext.setActiveWorkspace(workspace);
+  }
+
+  switchWorkspaceById(workspaceId: string): void {
+
+    if (!workspaceId) {
+      this.switchWorkspace(null);
+      return;
+    }
+
+    const match = this.workspaces.find(w => w.id === workspaceId) || null;
+    this.switchWorkspace(match);
   }
 
   updateNavPermissions(profile: AppUser): void {
@@ -147,17 +225,19 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
 
   onSearch(): void {
 
-    if (!this.searchQuery.trim()) return;
-
-    this.router.navigate(['/notes'], {
-      queryParams: { q: this.searchQuery.trim() }
+    this.router.navigate(['/search'], {
+      queryParams: { q: this.searchQuery.trim() || undefined }
     });
+  }
+
+  toggleTheme(): void {
+    this.themeService.toggle();
   }
 
   async logout(): Promise<void> {
 
     await this.authService.logout();
-
+    this.workspaceContext.clear();
     this.router.navigate(['/auth/login']);
   }
 

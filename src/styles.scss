@@ -23,6 +23,21 @@
   --transition: 0.2s ease;
 }
 
+body.theme-dark {
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  --color-primary-light: #1e3a5f;
+  --color-bg: #0f172a;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+  --color-sidebar: #020617;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
 *,
 *::before,
 *::after {

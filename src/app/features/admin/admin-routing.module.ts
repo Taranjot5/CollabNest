@@ -8,6 +8,8 @@ import { UserFormComponent } from './pages/user-form/user-form.component';
 
 import { RolePermissionsComponent } from './pages/role-permissions/role-permissions.component';
 
+import { AuditLogsComponent } from './pages/audit-logs/audit-logs.component';
+
 const routes: Routes = [
 
   {
@@ -34,6 +36,11 @@ const routes: Routes = [
   {
     path: 'roles',
     component: RolePermissionsComponent
+  },
+
+  {
+    path: 'audit-logs',
+    component: AuditLogsComponent
   }
 ];
 

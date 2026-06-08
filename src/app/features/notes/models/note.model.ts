@@ -1,5 +1,6 @@
-import { Attachment }
-    from './attachment.model';
+import { Attachment } from './attachment.model';
+
+export type NoteWorkflowStatus = 'draft' | 'review' | 'published';
 
 export interface Note {
 
@@ -12,6 +13,8 @@ export interface Note {
     category: string;
 
     priority: string;
+
+    workflowStatus?: NoteWorkflowStatus;
 
     createdAt: number;
 
@@ -38,4 +41,8 @@ export interface Note {
     tags?: string[];
 
     attachments?: Attachment[];
+
+    linkedNoteIds?: string[];
+
+    lastEditedBy?: string;
 }

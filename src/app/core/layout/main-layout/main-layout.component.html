@@ -7,6 +7,17 @@
       <h2>Knowledge Hub</h2>
     </div>
 
+    <!-- WORKSPACE SWITCHER -->
+    <div class="workspace-switcher" *ngIf="canAccessWorkspaces">
+      <label>Workspace</label>
+      <select
+        [ngModel]="activeWorkspace?.id || ''"
+        (ngModelChange)="switchWorkspaceById($event)">
+        <option value="">All Workspaces</option>
+        <option *ngFor="let ws of workspaces" [value]="ws.id">{{ ws.name }}</option>
+      </select>
+    </div>
+
     <mat-divider></mat-divider>
 
     <nav class="nav-links">
@@ -16,6 +27,11 @@
       <a *ngIf="canAccessDashboard" mat-button routerLink="/dashboard" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
         <mat-icon>dashboard</mat-icon>
         <span>Dashboard</span>
+      </a>
+
+      <a mat-button routerLink="/search" routerLinkActive="active-link">
+        <mat-icon>search</mat-icon>
+        <span>Search</span>
       </a>
 
       <a *ngIf="canAccessNotes" mat-button routerLink="/notes" routerLinkActive="active-link">
@@ -55,6 +71,7 @@
       <a *ngIf="canAccessNotifications" mat-button routerLink="/notifications" routerLinkActive="active-link">
         <mat-icon>notifications</mat-icon>
         <span>Notifications</span>
+        <span class="nav-badge" *ngIf="unreadCount">{{ unreadCount }}</span>
       </a>
 
       <a *ngIf="canAccessTrash" mat-button routerLink="/notes/trash" routerLinkActive="active-link">
@@ -67,6 +84,11 @@
         <span>User Management</span>
       </a>
 
+      <a *ngIf="isSuperAdmin" mat-button routerLink="/admin/audit-logs" routerLinkActive="active-link">
+        <mat-icon>history_edu</mat-icon>
+        <span>Audit Logs</span>
+      </a>
+
       <a mat-button routerLink="/profile" routerLinkActive="active-link">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
@@ -75,6 +97,10 @@
     </nav>
 
     <div class="sidebar-footer">
+      <button mat-stroked-button class="theme-btn" (click)="toggleTheme()">
+        <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        {{ isDarkTheme ? 'Light' : 'Dark' }}
+      </button>
       <button mat-stroked-button class="logout-btn" (click)="logout()">
         <mat-icon>logout</mat-icon>
         Logout
@@ -93,19 +119,29 @@
 
       <span class="topbar-title">{{ pageTitle }}</span>
 
+      <span class="workspace-pill" *ngIf="activeWorkspace">
+        <mat-icon>folder_shared</mat-icon>
+        {{ activeWorkspace.name }}
+      </span>
+
       <span class="spacer"></span>
 
       <div class="topbar-search">
         <mat-icon>search</mat-icon>
         <input
           type="text"
-          placeholder="Search notes..."
+          placeholder="Search everything..."
           [(ngModel)]="searchQuery"
           (keyup.enter)="onSearch()" />
       </div>
 
-      <button mat-icon-button routerLink="/notifications" class="topbar-icon-btn">
+      <button mat-icon-button routerLink="/notifications" class="topbar-icon-btn notification-btn">
         <mat-icon>notifications</mat-icon>
+        <span class="badge-dot" *ngIf="unreadCount"></span>
+      </button>
+
+      <button mat-icon-button (click)="toggleTheme()" class="topbar-icon-btn">
+        <mat-icon>{{ isDarkTheme ? 'light_mode' : 'dark_mode' }}</mat-icon>
       </button>
 
       <button mat-icon-button routerLink="/profile" class="topbar-icon-btn">

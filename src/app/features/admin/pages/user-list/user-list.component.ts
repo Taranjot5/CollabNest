@@ -204,6 +204,10 @@ export class UserListComponent implements OnInit, OnDestroy {
     this.router.navigate(['/admin/roles']);
   }
 
+  viewAuditLogs(): void {
+    this.router.navigate(['/admin/audit-logs']);
+  }
+
   async toggleStatus(user: AppUser): Promise<void> {
 
     const nextStatus: UserStatus =

@@ -1,299 +1,45 @@
-.register-page {
+@import '../../_auth-shared';
 
-  min-height: 100vh;
-
+.bootstrap-badge {
   display: flex;
-
-  background: #f4f7fb;
-}
-
-/* =========================
-   LEFT SIDE
-========================= */
-
-.register-left {
-
-  flex: 1;
-
-  position: relative;
-
-  background:
-    linear-gradient(
-      135deg,
-      #1565c0,
-      #42a5f5
-    );
-
-  display: flex;
-
-  justify-content: center;
-
   align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+  background: #fef3c7;
+  color: #b45309;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
 
-  overflow: hidden;
-
-  padding: 60px;
-
-  color: white;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
 }
 
-.overlay {
+.loading-bootstrap {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-text-muted, #64748b);
 
-  position: absolute;
-
-  inset: 0;
-
-  background:
-    radial-gradient(
-      circle at top right,
-      rgba(255,255,255,0.15),
-      transparent 40%
-    );
+  .spinner {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--color-border, #e2e8f0);
+    border-top-color: var(--color-primary, #2563eb);
+    margin-bottom: 12px;
+  }
 }
 
-.branding {
-
-  position: relative;
-
-  z-index: 2;
-
-  max-width: 500px;
-}
-
-.branding h1 {
-
-  font-size: 60px;
-
-  font-weight: 700;
-
+.alert-info {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
   margin-bottom: 20px;
 }
 
-.branding p {
-
-  font-size: 20px;
-
-  line-height: 1.8;
-
-  opacity: 0.95;
-}
-
-.features {
-
-  margin-top: 40px;
-
-  display: flex;
-
-  flex-direction: column;
-
-  gap: 20px;
-}
-
-.feature {
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 15px;
-
-  font-size: 18px;
-}
-
-.feature span {
-
-  font-size: 28px;
-}
-
-/* =========================
-   RIGHT SIDE
-========================= */
-
-.register-right {
-
-  flex: 1;
-
-  display: flex;
-
-  justify-content: center;
-
-  align-items: center;
-
-  padding: 40px;
-}
-
-/* =========================
-   CARD
-========================= */
-
-.register-card {
-
-  width: 100%;
-
-  max-width: 430px;
-
-  background: white;
-
-  padding: 40px;
-
-  border-radius: 24px;
-
-  box-shadow:
-    0 10px 40px rgba(0,0,0,0.08);
-}
-
-.register-card h2 {
-
+.link-btn {
+  display: block;
   text-align: center;
-
-  font-size: 34px;
-
-  margin-bottom: 10px;
-
-  color: #1e293b;
-}
-
-.subtitle {
-
-  text-align: center;
-
-  color: #64748b;
-
-  margin-bottom: 30px;
-}
-
-/* =========================
-   INPUTS
-========================= */
-
-.input-group {
-
-  display: flex;
-
-  flex-direction: column;
-
-  margin-bottom: 20px;
-}
-
-.input-group label {
-
-  margin-bottom: 8px;
-
-  font-weight: 600;
-
-  color: #334155;
-}
-
-.input-group input {
-
-  padding: 14px 16px;
-
-  border-radius: 12px;
-
-  border: 1px solid #cbd5e1;
-
-  outline: none;
-
-  font-size: 15px;
-
-  transition: 0.3s;
-}
-
-.input-group input:focus {
-
-  border-color: #1976d2;
-
-  box-shadow:
-    0 0 0 4px rgba(25,118,210,0.1);
-}
-
-/* =========================
-   BUTTON
-========================= */
-
-.register-btn {
-
-  width: 100%;
-
-  padding: 14px;
-
-  border: none;
-
-  border-radius: 12px;
-
-  background: #1976d2;
-
-  color: white;
-
-  font-size: 16px;
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.register-btn:hover {
-
-  background: #1565c0;
-}
-
-.register-btn:disabled {
-
-  opacity: 0.7;
-
-  cursor: not-allowed;
-}
-
-/* =========================
-   ERROR
-========================= */
-
-.error {
-
-  color: crimson;
-
-  text-align: center;
-
-  margin-top: 18px;
-}
-
-/* =========================
-   LOGIN LINK
-========================= */
-
-.login-link {
-
-  text-align: center;
-
-  margin-top: 25px;
-
-  color: #64748b;
-}
-
-.login-link a {
-
-  color: #1976d2;
-
   text-decoration: none;
-
-  font-weight: 600;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 900px) {
-
-  .register-left {
-
-    display: none;
-  }
-
-  .register-right {
-
-    flex: 1;
-  }
+  margin-top: 8px;
 }

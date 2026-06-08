@@ -1,0 +1,77 @@
+<div class="global-search-page">
+
+  <div class="search-header">
+    <h1>Search</h1>
+    <p>Find notes, workspaces, and tasks across your knowledge hub.</p>
+  </div>
+
+  <div class="search-bar">
+    <mat-icon>search</mat-icon>
+    <input
+      type="text"
+      placeholder="Search everything..."
+      [(ngModel)]="query"
+      (ngModelChange)="onQueryChange()"
+      autofocus>
+  </div>
+
+  <div class="filters-row">
+    <select [(ngModel)]="typeFilter" (ngModelChange)="onFilterChange()">
+      <option value="all">All Types</option>
+      <option value="note">Notes</option>
+      <option value="workspace">Workspaces</option>
+      <option value="task">Tasks</option>
+    </select>
+
+    <select [(ngModel)]="priorityFilter" (ngModelChange)="onFilterChange()">
+      <option value="">All Priorities</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+
+    <input
+      type="text"
+      placeholder="Category..."
+      [(ngModel)]="categoryFilter"
+      (ngModelChange)="onFilterChange()">
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="skeleton-row" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <div class="results-list" *ngIf="!loading && results.length > 0">
+    <div
+      class="result-row"
+      *ngFor="let result of results"
+      (click)="openResult(result)">
+
+      <div class="result-icon" [ngClass]="result.type">
+        <mat-icon>{{ getTypeIcon(result.type) }}</mat-icon>
+      </div>
+
+      <div class="result-content">
+        <h3>{{ result.title }}</h3>
+        <p>{{ result.subtitle }}</p>
+      </div>
+
+      <span class="type-badge">{{ getTypeLabel(result.type) }}</span>
+      <mat-icon class="arrow">chevron_right</mat-icon>
+
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && query && results.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <h3>No results for "{{ query }}"</h3>
+    <p>Try different keywords or adjust your filters.</p>
+  </div>
+
+  <div class="empty-state" *ngIf="!query">
+    <mat-icon>travel_explore</mat-icon>
+    <h3>Start typing to search</h3>
+    <p>Search across notes, workspaces, and tasks with smart ranking.</p>
+  </div>
+
+</div>

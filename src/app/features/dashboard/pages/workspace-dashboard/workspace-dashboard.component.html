@@ -6,7 +6,8 @@
 
     <div>
       <h1>{{ getGreeting() }}, {{ userName }}!</h1>
-      <p>Here's an overview of your knowledge hub.</p>
+      <p *ngIf="!activeWorkspaceName">Here's an overview of your knowledge hub.</p>
+      <p *ngIf="activeWorkspaceName">Viewing workspace: <strong>{{ activeWorkspaceName }}</strong></p>
     </div>
 
     <div class="header-actions">
@@ -19,6 +20,11 @@
       <a class="action-btn secondary" routerLink="/workspaces">
         <mat-icon>folder_shared</mat-icon>
         Workspaces
+      </a>
+
+      <a class="action-btn secondary" routerLink="/search">
+        <mat-icon>search</mat-icon>
+        Search
       </a>
 
     </div>
@@ -75,6 +81,16 @@
         <div class="stat-info">
           <span class="stat-value">{{ stats.unreadNotifications }}</span>
           <span class="stat-label">Unread Alerts</span>
+        </div>
+      </a>
+
+      <a class="stat-card" routerLink="/workspaces" *ngIf="stats.folders > 0">
+        <div class="stat-icon folders">
+          <mat-icon>folder</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.folders }}</span>
+          <span class="stat-label">Folders</span>
         </div>
       </a>
 

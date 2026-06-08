@@ -158,6 +158,49 @@ export class NotificationService {
   }
 
   // =========================
+  // MARK ALL READ
+  // =========================
+
+  async markAllRead(): Promise<void> {
+
+    const user = await this.afAuth.currentUser;
+
+    if (!user) return;
+
+    const snapshot = await this.firestore
+      .collection('notifications', ref =>
+        ref
+          .where('receiverId', '==', user.uid)
+          .where('read', '==', false)
+      )
+      .get()
+      .toPromise();
+
+    const batch = this.firestore.firestore.batch();
+
+    snapshot?.docs.forEach(doc => {
+      batch.update(doc.ref, { read: true });
+    });
+
+    if (snapshot?.docs.length) {
+      await batch.commit();
+    }
+  }
+
+  // =========================
+  // UNREAD COUNT
+  // =========================
+
+  getUnreadCount(): Observable<number> {
+
+    return this.getNotifications().pipe(
+      map(notifications =>
+        notifications.filter(n => !n.read).length
+      )
+    );
+  }
+
+  // =========================
   // DELETE NOTIFICATION
   // =========================
 

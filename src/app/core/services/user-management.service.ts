@@ -12,6 +12,8 @@ import firebase from 'firebase/compat/app';
 
 import { environment } from '../../../environments/environment';
 
+import { AuditLogService } from './audit-log.service';
+
 import {
   AppUser,
   CreateUserPayload,
@@ -29,7 +31,8 @@ export class UserManagementService {
 
   constructor(
     private firestore: AngularFirestore,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private auditLog: AuditLogService
   ) {}
 
   // =========================
@@ -116,6 +119,14 @@ export class UserManagementService {
 
     await this.syncWorkspaceMembership(uid, [], payload.workspaceIds);
 
+    await this.auditLog.log(
+      'user.created',
+      'user',
+      uid,
+      `User "${payload.name}" created with role ${payload.role}`,
+      { metadata: { email: payload.email, role: payload.role } }
+    );
+
     return uid;
   }
 
@@ -170,6 +181,13 @@ export class UserManagementService {
         status,
         updatedAt: Date.now()
       });
+
+    await this.auditLog.log(
+      status === 'active' ? 'user.activated' : 'user.deactivated',
+      'user',
+      uid,
+      `User account ${status === 'active' ? 'activated' : 'deactivated'}`
+    );
   }
 
   // =========================

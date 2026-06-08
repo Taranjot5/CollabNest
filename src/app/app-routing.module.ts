@@ -89,6 +89,13 @@ const routes: Routes = [
       },
 
       {
+        path: 'search',
+        loadChildren: () =>
+          import('./features/search/search.module')
+            .then(m => m.SearchModule)
+      },
+
+      {
         path: 'admin',
         loadChildren: () =>
           import('./features/admin/admin.module')

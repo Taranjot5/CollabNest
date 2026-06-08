@@ -1,151 +1,101 @@
-<div class="register-page">
-
-  <!-- LEFT SIDE -->
-
-  <div class="register-left">
-
-    <div class="overlay"></div>
-
-    <div class="branding">
-
-      <h1>
-        Knowledge Hub
-      </h1>
-
-      <p>
-        Organize notes, collaborate with teams,
-        and manage your knowledge smarter.
-      </p>
-
-      <div class="features">
-
-        <div class="feature">
-
-
-          <p>Smart Note Management</p>
-
-        </div>
-
-        <div class="feature">
-
-
-          <p>Star Important Notes</p>
-
-        </div>
-
-        <div class="feature">
-
-
-          <p>Share & Collaborate</p>
-
-        </div>
-
+<div class="auth-page">
+  <div class="auth-brand">
+    <div class="brand-content">
+      <div class="brand-logo">
+        <mat-icon>auto_stories</mat-icon>
       </div>
-
+      <h1>Knowledge Hub</h1>
+      <p *ngIf="isBootstrap">Set up your organization as the first Super Admin.</p>
+      <p *ngIf="!isBootstrap && !checkingBootstrap">Accounts are managed by your Super Admin.</p>
+      <ul class="brand-features" *ngIf="isBootstrap">
+        <li><mat-icon>admin_panel_settings</mat-icon> Full admin access</li>
+        <li><mat-icon>group_add</mat-icon> Add and manage team members</li>
+        <li><mat-icon>assignment</mat-icon> Assign tasks to your team</li>
+      </ul>
     </div>
-
   </div>
 
-  <!-- RIGHT SIDE -->
-
-  <div class="register-right">
-
-    <div class="register-card">
-
-      <h2>
-        Create Account
-      </h2>
-
-      <p class="subtitle">
-        Start your productivity journey
-      </p>
-
-      <!-- NAME -->
-
-      <div class="input-group">
-
-        <label>
-          Full Name
-        </label>
-
-        <input
-          type="text"
-          placeholder="Enter your full name"
-          [(ngModel)]="name">
-
+  <div class="auth-panel">
+    <div class="auth-card">
+      <div class="loading-bootstrap" *ngIf="checkingBootstrap">
+        <span class="spinner"></span>
+        <p>Checking setup...</p>
       </div>
 
-      <!-- EMAIL -->
+      <ng-container *ngIf="!checkingBootstrap && registrationClosed">
+        <div class="card-header">
+          <h2>Registration closed</h2>
+          <p>Your organization already has a Super Admin.</p>
+        </div>
+        <div class="alert alert-info">
+          <mat-icon>info</mat-icon>
+          New accounts must be created by your Super Admin from User Management.
+        </div>
+        <a routerLink="/auth/login" class="btn-primary link-btn">Back to sign in</a>
+      </ng-container>
 
-      <div class="input-group">
+      <ng-container *ngIf="!checkingBootstrap && !registrationClosed">
+        <div class="card-header">
+          <h2>{{ isBootstrap ? 'Create Super Admin' : 'Create account' }}</h2>
+          <p>{{ isBootstrap ? 'First user becomes Super Admin with full control' : 'Start your productivity journey' }}</p>
+        </div>
 
-        <label>
-          Email Address
-        </label>
+        <div class="bootstrap-badge" *ngIf="isBootstrap">
+          <mat-icon>verified</mat-icon>
+          Bootstrap setup — you'll manage all users and roles
+        </div>
 
-        <input
-          type="email"
-          placeholder="Enter your email"
-          [(ngModel)]="email">
+        <form class="auth-form" (ngSubmit)="register()">
+          <div class="field">
+            <label>Full name</label>
+            <div class="input-wrap">
+              <mat-icon>person</mat-icon>
+              <input type="text" [(ngModel)]="name" name="name" placeholder="Your full name">
+            </div>
+          </div>
 
-      </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="input-wrap">
+              <mat-icon>email</mat-icon>
+              <input type="email" [(ngModel)]="email" name="email" placeholder="you@company.com">
+            </div>
+          </div>
 
-      <!-- PASSWORD -->
+          <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+              <mat-icon>lock</mat-icon>
+              <input type="password" [(ngModel)]="password" name="password" placeholder="Min. 6 characters">
+            </div>
+          </div>
 
-      <div class="input-group">
+          <div class="field">
+            <label>Confirm password</label>
+            <div class="input-wrap">
+              <mat-icon>lock</mat-icon>
+              <input type="password" [(ngModel)]="confirmPassword" name="confirmPassword" placeholder="Repeat password">
+            </div>
+          </div>
 
-        <label>
-          Password
-        </label>
+          <button type="submit" class="btn-primary" [disabled]="loading">
+            <span *ngIf="!loading">{{ isBootstrap ? 'Create Super Admin' : 'Create account' }}</span>
+            <span *ngIf="loading" class="btn-loading">
+              <span class="spinner"></span> Creating...
+            </span>
+          </button>
+        </form>
 
-        <input
-          type="password"
-          placeholder="Enter your password"
-          [(ngModel)]="password">
+        <div class="alert alert-error" *ngIf="errorMessage">
+          <mat-icon>error_outline</mat-icon>
+          {{ errorMessage }}
+        </div>
 
-      </div>
-
-      <!-- REGISTER BUTTON -->
-
-      <button
-        class="register-btn"
-        (click)="register()"
-        [disabled]="loading">
-
-        {{
-          loading
-          ? 'Creating Account...'
-          : 'Create Account'
-        }}
-
-      </button>
-
-      <!-- ERROR -->
-
-      <p
-        class="error"
-        *ngIf="errorMessage">
-
-        {{ errorMessage }}
-
-      </p>
-
-      <!-- LOGIN LINK -->
-
-      <p class="login-link">
-
-        Already have an account?
-
-        <a routerLink="/auth/login">
-
-          Login
-
-        </a>
-
-      </p>
-
+        <p class="auth-footer">
+          Already have an account?
+          <a routerLink="/auth/login">Sign in</a>
+        </p>
+      </ng-container>
     </div>
-
   </div>
-
 </div>

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 
 import { take } from 'rxjs/operators';
 
@@ -15,6 +15,10 @@ import { NotificationService } from '../../../../core/services/notification.serv
 import { AuthService } from '../../../../core/services/auth.service';
 
 import { WorkspaceService } from '../../../workspaces/services/workspace.service';
+
+import { WorkspaceContextService } from '../../../../core/services/workspace-context.service';
+
+import { FolderService } from '../../../folders/services/folder.service';
 
 import { Note } from '../../../notes/models/note.model';
 
@@ -33,10 +37,14 @@ export class WorkspaceDashboardComponent implements OnInit {
     totalNotes: 0,
     starredNotes: 0,
     workspaces: 0,
+    folders: 0,
     unreadNotifications: 0,
     sharedNotes: 0,
-    trashNotes: 0
+    trashNotes: 0,
+    tasks: 0
   };
+
+  activeWorkspaceName = '';
 
   recentNotes: Note[] = [];
 
@@ -48,6 +56,8 @@ export class WorkspaceDashboardComponent implements OnInit {
     private noteService: NoteService,
     private notificationService: NotificationService,
     private workspaceService: WorkspaceService,
+    private workspaceContext: WorkspaceContextService,
+    private folderService: FolderService,
     private authService: AuthService,
     private afAuth: AngularFireAuth,
     private router: Router
@@ -73,13 +83,21 @@ export class WorkspaceDashboardComponent implements OnInit {
         }
       });
 
+      const activeWs = this.workspaceContext.activeWorkspace;
+      this.activeWorkspaceName = activeWs?.name || '';
+
+      const folderObs = activeWs?.id
+        ? this.folderService.getFolders(activeWs.id).pipe(take(1))
+        : of([]);
+
       forkJoin({
-        notes: this.noteService.getNotes().pipe(take(1)),
+        notes: this.noteService.getNotes(activeWs?.id).pipe(take(1)),
         starred: this.noteService.getStarredNotes().pipe(take(1)),
         trash: this.noteService.getTrashNotes().pipe(take(1)),
         workspaces: this.workspaceService.getUserWorkspaces().pipe(take(1)),
-        notifications: this.notificationService.getNotifications().pipe(take(1))
-      }).subscribe(({ notes, starred, trash, workspaces, notifications }) => {
+        notifications: this.notificationService.getNotifications().pipe(take(1)),
+        folders: folderObs
+      }).subscribe(({ notes, starred, trash, workspaces, notifications, folders }) => {
 
         const sharedNotes = notes.filter(
           note => note.createdBy !== user.uid
@@ -89,9 +107,11 @@ export class WorkspaceDashboardComponent implements OnInit {
           totalNotes: notes.length,
           starredNotes: starred.length,
           workspaces: workspaces.length,
+          folders: folders.length,
           unreadNotifications: notifications.filter(n => !n.read).length,
           sharedNotes: sharedNotes.length,
-          trashNotes: trash.length
+          trashNotes: trash.length,
+          tasks: 0
         };
 
         this.recentNotes = [...notes]

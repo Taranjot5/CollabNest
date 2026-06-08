@@ -18,11 +18,14 @@ import { UserFormComponent } from './pages/user-form/user-form.component';
 
 import { RolePermissionsComponent } from './pages/role-permissions/role-permissions.component';
 
+import { AuditLogsComponent } from './pages/audit-logs/audit-logs.component';
+
 @NgModule({
   declarations: [
     UserListComponent,
     UserFormComponent,
-    RolePermissionsComponent
+    RolePermissionsComponent,
+    AuditLogsComponent
   ],
   imports: [
     CommonModule,

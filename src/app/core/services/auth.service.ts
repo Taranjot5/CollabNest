@@ -39,6 +39,13 @@ export class AuthService {
     password: string
   ) {
 
+    const hasSuperAdmin =
+      await this.userManagement.hasSuperAdmin();
+
+    if (hasSuperAdmin) {
+      throw new Error('Registration is closed. Contact your Super Admin for an account.');
+    }
+
     const userCredential =
 
       await this.afAuth
@@ -51,9 +58,6 @@ export class AuthService {
       userCredential.user?.uid;
 
     if (!uid) return;
-
-    const hasSuperAdmin =
-      await this.userManagement.hasSuperAdmin();
 
     await this.firestore
       .collection('users')
@@ -73,7 +77,7 @@ export class AuthService {
 
         designation: '',
 
-        role: hasSuperAdmin ? 'member' : 'super_admin',
+        role: 'super_admin',
 
         status: 'active',
 

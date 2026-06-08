@@ -1,12 +1,22 @@
 export interface Folder {
 
-id?: string;
+  id?: string;
 
-name: string;
+  name: string;
 
-workspaceId: string;
+  workspaceId: string;
 
-createdBy: string;
+  parentId?: string | null;
 
-createdAt: number;
+  createdBy: string;
+
+  createdAt: number;
+
+  updatedAt?: number;
+
+  isPinned?: boolean;
+
+  color?: string;
+
+  sortOrder?: number;
 }

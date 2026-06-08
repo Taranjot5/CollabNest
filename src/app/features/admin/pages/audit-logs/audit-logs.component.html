@@ -1,0 +1,65 @@
+<div class="audit-logs-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Audit Logs</h1>
+      <p>System-wide activity trail for security and compliance.</p>
+    </div>
+    <a routerLink="/admin/users" class="back-link">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Users
+    </a>
+  </div>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading audit logs...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="filters-panel">
+      <div class="search-box">
+        <mat-icon>search</mat-icon>
+        <input
+          type="text"
+          placeholder="Search logs..."
+          [(ngModel)]="searchText"
+          (ngModelChange)="applyFilters()">
+      </div>
+
+      <select [(ngModel)]="actionFilter" (ngModelChange)="applyFilters()">
+        <option value="all">All Actions</option>
+        <option value="user">User</option>
+        <option value="workspace">Workspace</option>
+        <option value="note">Note</option>
+        <option value="member">Member</option>
+        <option value="login">Login</option>
+      </select>
+    </div>
+
+    <div class="log-list" *ngIf="filteredLogs.length > 0">
+      <div class="log-row" *ngFor="let log of filteredLogs">
+        <div class="log-icon">
+          <mat-icon>history</mat-icon>
+        </div>
+        <div class="log-content">
+          <strong>{{ log.message }}</strong>
+          <p>
+            <span class="action-tag">{{ formatAction(log.action) }}</span>
+            by {{ log.actorName }}
+            <span *ngIf="log.workspaceId"> · Workspace</span>
+          </p>
+        </div>
+        <span class="log-time">{{ log.createdAt | date:'medium' }}</span>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="filteredLogs.length === 0">
+      <mat-icon>history_toggle_off</mat-icon>
+      <h3>No audit logs found</h3>
+    </div>
+
+  </ng-container>
+
+</div>

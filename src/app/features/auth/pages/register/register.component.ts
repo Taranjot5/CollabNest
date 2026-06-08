@@ -1,20 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
+
+import { UserManagementService } from '../../../../core/services/user-management.service';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-
-export class RegisterComponent {
-
-  // =========================
-  // FORM FIELDS
-  // =========================
+export class RegisterComponent implements OnInit {
 
   name = '';
 
@@ -22,71 +19,67 @@ export class RegisterComponent {
 
   password = '';
 
-  // =========================
-  // UI STATES
-  // =========================
+  confirmPassword = '';
 
   loading = false;
 
-  errorMessage = '';
+  checkingBootstrap = true;
 
-  // =========================
-  // CONSTRUCTOR
-  // =========================
+  registrationClosed = false;
+
+  isBootstrap = false;
+
+  errorMessage = '';
 
   constructor(
     private authService: AuthService,
+    private userManagement: UserManagementService,
     private router: Router
   ) {}
 
-  // =========================
-  // REGISTER
-  // =========================
+  async ngOnInit(): Promise<void> {
 
-  async register() {
+    try {
+      const hasSuperAdmin = await this.userManagement.hasSuperAdmin();
+      this.registrationClosed = hasSuperAdmin;
+      this.isBootstrap = !hasSuperAdmin;
+    } finally {
+      this.checkingBootstrap = false;
+    }
+  }
 
-    // VALIDATION
+  async register(): Promise<void> {
 
-    if (
-      !this.name ||
-      !this.email ||
-      !this.password
-    ) {
+    if (this.registrationClosed) {
+      this.errorMessage = 'Public registration is closed. Contact your Super Admin for an account.';
+      return;
+    }
 
-      this.errorMessage =
-        'Please fill all fields';
+    if (!this.name || !this.email || !this.password) {
+      this.errorMessage = 'Please fill all fields';
+      return;
+    }
 
+    if (this.password.length < 6) {
+      this.errorMessage = 'Password must be at least 6 characters';
+      return;
+    }
+
+    if (this.password !== this.confirmPassword) {
+      this.errorMessage = 'Passwords do not match';
       return;
     }
 
     try {
-
       this.loading = true;
-
       this.errorMessage = '';
 
-      // FIREBASE REGISTER
-
-      await this.authService.register(
-
-        this.name,
-
-        this.email,
-
-        this.password
-      );
-
-      // REDIRECT
-
+      await this.authService.register(this.name, this.email, this.password);
       this.router.navigate(['/dashboard']);
 
     } catch (error: any) {
-
-      this.errorMessage =
-        error.message;
-
+      this.errorMessage = error.message || 'Registration failed';
     } finally {
-
       this.loading = false;
     }
   }

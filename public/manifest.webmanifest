@@ -1,0 +1,17 @@
+{
+  "name": "Knowledge Hub",
+  "short_name": "KnowledgeHub",
+  "description": "Collaborative workspace for notes, tasks, and team knowledge",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}
