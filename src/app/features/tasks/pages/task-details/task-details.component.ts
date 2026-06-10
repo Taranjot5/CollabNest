@@ -54,6 +54,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   canSetProgress = false;
 
+  canSubmitReview = false;
+
   canReview = false;
 
   canComment = false;
@@ -65,6 +67,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
   progressStatus: TaskStatus = 'pending';
 
   workUpdateText = '';
+
+  progressCommentText = '';
 
   commentText = '';
 
@@ -144,7 +148,11 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
         ? this.permissionService.canSetTaskProgress(this.userProfile, task)
         : false;
       this.canUpdateProgress = this.canSetProgress
-        && !this.canManageTasks;
+        && !this.canManageTasks
+        && task.status !== 'under_review';
+      this.canSubmitReview = this.userProfile
+        ? this.permissionService.canSubmitForReview(this.userProfile, task)
+        : false;
       this.canReview = this.userProfile
         ? this.permissionService.canReviewTask(this.userProfile, task)
         : false;
@@ -197,17 +205,48 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     this.errorMessage = '';
 
     try {
+      const payload: {
+        status?: TaskStatus;
+        progressPercent?: number;
+        attachments?: Attachment[];
+      } = {
+        status: this.progressStatus,
+        attachments: this.progressAttachments
+      };
+
+      if (!this.canManageTasks) {
+        payload.progressPercent = this.progressPercent;
+      }
+
       await this.taskService.updateProgress(
         this.taskId,
-        {
-          status: this.progressStatus,
-          progressPercent: this.progressPercent,
-          attachments: this.progressAttachments
-        },
+        payload,
         this.userProfile
       );
 
       this.progressAttachments = [];
+    } catch (err: any) {
+      this.errorMessage = err.message;
+    } finally {
+      this.saving = false;
+    }
+  }
+
+  async addProgressComment(): Promise<void> {
+
+    if (!this.userProfile || !this.progressCommentText.trim()) return;
+
+    this.saving = true;
+    this.errorMessage = '';
+
+    try {
+      await this.taskService.addComment(
+        this.taskId,
+        this.progressCommentText.trim(),
+        this.userProfile,
+        true
+      );
+      this.progressCommentText = '';
     } catch (err: any) {
       this.errorMessage = err.message;
     } finally {

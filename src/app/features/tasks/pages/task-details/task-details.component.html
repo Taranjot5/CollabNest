@@ -107,58 +107,38 @@
 
     <div class="side-panels">
 
-      <!-- ADMIN: SET PROGRESS -->
+      <!-- PROGRESS (ADMIN + ASSIGNEE) -->
 
-      <div class="panel progress-panel admin-progress" *ngIf="canManageTasks && canSetProgress">
+      <div class="panel progress-panel" *ngIf="canSetProgress">
 
         <h2>
-          <mat-icon>admin_panel_settings</mat-icon>
-          Manage Progress
+          <mat-icon>{{ canManageTasks ? 'admin_panel_settings' : 'trending_up' }}</mat-icon>
+          {{ canManageTasks ? 'Manage Progress' : 'Update Progress' }}
         </h2>
 
-        <p class="panel-hint">Update task status and progress on behalf of assignees.</p>
+        <p class="panel-hint" *ngIf="canManageTasks">
+          Update task status and leave progress notes for the team.
+        </p>
 
         <div class="form-group">
           <label>Status</label>
           <select [(ngModel)]="progressStatus">
-            <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+            <ng-container *ngIf="canManageTasks">
+              <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+            </ng-container>
+            <ng-container *ngIf="!canManageTasks">
+              <option value="pending">Pending</option>
+              <option value="in_progress">In Progress</option>
+            </ng-container>
           </select>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" *ngIf="!canManageTasks">
           <label>Progress: {{ progressPercent }}%</label>
           <input type="range" min="0" max="100" [(ngModel)]="progressPercent">
         </div>
 
-        <button class="panel-btn primary" (click)="saveProgress()" [disabled]="saving">
-          Save Progress
-        </button>
-
-      </div>
-
-      <!-- ASSIGNEE: PROGRESS UPDATE -->
-
-      <div class="panel progress-panel" *ngIf="canUpdateProgress && task.status !== 'under_review'">
-
-        <h2>
-          <mat-icon>trending_up</mat-icon>
-          Update Progress
-        </h2>
-
-        <div class="form-group">
-          <label>Status</label>
-          <select [(ngModel)]="progressStatus">
-            <option value="pending">Pending</option>
-            <option value="in_progress">In Progress</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Progress: {{ progressPercent }}%</label>
-          <input type="range" min="0" max="100" [(ngModel)]="progressPercent">
-        </div>
-
-        <div class="form-group">
+        <div class="form-group" *ngIf="!canManageTasks">
           <label>Upload Files</label>
           <input type="file" (change)="onProgressFileSelected($event)">
           <div class="mini-attachments" *ngIf="progressAttachments.length">
@@ -170,36 +150,79 @@
           Save Progress
         </button>
 
-        <hr>
+        <div class="progress-comments" *ngIf="canComment">
+          <h3>
+            <mat-icon>forum</mat-icon>
+            Progress Notes
+          </h3>
 
-        <div class="form-group">
-          <label>Work Update</label>
-          <textarea [(ngModel)]="workUpdateText" rows="3" placeholder="Describe what you've done..."></textarea>
-        </div>
+          <div class="progress-comments-list">
+            <div
+              class="comment-item"
+              *ngFor="let comment of comments"
+              [class.work-update]="comment.isWorkUpdate">
 
-        <button class="panel-btn secondary" (click)="submitWorkUpdate()" [disabled]="saving || !workUpdateText.trim()">
-          Submit Work Update
-        </button>
+              <div class="comment-header">
+                <strong>{{ comment.userName }}</strong>
+                <span class="comment-badge" *ngIf="comment.isWorkUpdate">Work Update</span>
+                <small>{{ comment.createdAt | date:'short' }}</small>
+              </div>
+              <p>{{ comment.message }}</p>
+            </div>
 
-        <hr>
+            <p class="no-comments" *ngIf="!comments.length">No progress notes yet.</p>
+          </div>
 
-        <div class="form-group">
-          <label>Completion Report</label>
-          <textarea [(ngModel)]="completionReportText" rows="4" placeholder="Summarize completed work for review..."></textarea>
-        </div>
-
-        <div class="form-group">
-          <label>Report Attachments</label>
-          <input type="file" (change)="onReportFileSelected($event)">
-          <div class="mini-attachments" *ngIf="reportAttachments.length">
-            <span *ngFor="let f of reportAttachments">{{ f.name }}</span>
+          <div class="comment-form">
+            <textarea
+              [(ngModel)]="progressCommentText"
+              rows="3"
+              placeholder="Add a progress note or update for the team..."
+              (keyup.enter)="$event.preventDefault(); addProgressComment()">
+            </textarea>
+            <button
+              class="panel-btn secondary small"
+              (click)="addProgressComment()"
+              [disabled]="saving || !progressCommentText.trim()">
+              Post Note
+            </button>
           </div>
         </div>
 
-        <button class="panel-btn success" (click)="submitForReview()" [disabled]="saving || !completionReportText.trim()">
-          <mat-icon>send</mat-icon>
-          Submit for Review
-        </button>
+        <ng-container *ngIf="canSubmitReview">
+
+          <hr>
+
+          <div class="form-group">
+            <label>Work Update</label>
+            <textarea [(ngModel)]="workUpdateText" rows="3" placeholder="Describe what you've done..."></textarea>
+          </div>
+
+          <button class="panel-btn secondary" (click)="submitWorkUpdate()" [disabled]="saving || !workUpdateText.trim()">
+            Submit Work Update
+          </button>
+
+          <hr>
+
+          <div class="form-group">
+            <label>Completion Report</label>
+            <textarea [(ngModel)]="completionReportText" rows="4" placeholder="Summarize completed work for review..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Report Attachments</label>
+            <input type="file" (change)="onReportFileSelected($event)">
+            <div class="mini-attachments" *ngIf="reportAttachments.length">
+              <span *ngFor="let f of reportAttachments">{{ f.name }}</span>
+            </div>
+          </div>
+
+          <button class="panel-btn success" (click)="submitForReview()" [disabled]="saving || !completionReportText.trim()">
+            <mat-icon>send</mat-icon>
+            Submit for Review
+          </button>
+
+        </ng-container>
 
       </div>
 

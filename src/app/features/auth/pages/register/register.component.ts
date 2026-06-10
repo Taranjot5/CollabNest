@@ -43,6 +43,10 @@ export class RegisterComponent implements OnInit {
       const hasSuperAdmin = await this.userManagement.hasSuperAdmin();
       this.registrationClosed = hasSuperAdmin;
       this.isBootstrap = !hasSuperAdmin;
+    } catch {
+      this.errorMessage = 'Unable to verify setup. Check your connection and try again.';
+      this.registrationClosed = false;
+      this.isBootstrap = true;
     } finally {
       this.checkingBootstrap = false;
     }
@@ -78,7 +82,12 @@ export class RegisterComponent implements OnInit {
       this.router.navigate(['/dashboard']);
 
     } catch (error: any) {
-      this.errorMessage = error.message || 'Registration failed';
+      const code = error?.code || '';
+      if (code === 'permission-denied' || error?.message?.includes('permission')) {
+        this.errorMessage = 'Registration blocked by Firestore rules. Deploy the latest firestore.rules and try again.';
+      } else {
+        this.errorMessage = error.message || 'Registration failed';
+      }
     } finally {
       this.loading = false;
     }

@@ -204,14 +204,13 @@ export class UserManagementService {
 
   async hasSuperAdmin(): Promise<boolean> {
 
-    const snapshot = await this.firestore
-      .collection('users', ref =>
-        ref.where('role', '==', 'super_admin').limit(1)
-      )
+    const doc = await this.firestore
+      .collection('system')
+      .doc('bootstrap')
       .get()
       .toPromise();
 
-    return (snapshot?.docs.length ?? 0) > 0;
+    return doc?.exists ?? false;
   }
 
   // =========================

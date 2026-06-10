@@ -19,6 +19,10 @@ service cloud.firestore {
       return isSignedIn() && userRole() == 'super_admin';
     }
 
+    function bootstrapExists() {
+      return exists(/databases/$(database)/documents/system/bootstrap);
+    }
+
     function isActiveUser() {
       return isSignedIn()
         && (!('status' in userDoc().data) || userDoc().data.status == 'active');
@@ -37,15 +41,28 @@ service cloud.firestore {
           || request.auth.uid in ws.admins);
     }
 
-    function isNoteParticipant(noteId) {
-      return isSignedIn()
-        && request.auth.uid in get(/databases/$(database)/documents/notes/$(noteId)).data.participants;
+    // ── Bootstrap (public read for registration gate) ─────
+    match /system/bootstrap {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && !bootstrapExists()
+        && request.resource.data.initialized == true
+        && request.resource.data.superAdminUid == request.auth.uid;
+      allow update, delete: if false;
     }
 
     // ── Users ──────────────────────────────────────────────
     match /users/{userId} {
       allow read: if isSignedIn() && (request.auth.uid == userId || isSuperAdmin());
-      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && (
+        isSuperAdmin()
+        || (
+          request.auth.uid == userId
+          && !bootstrapExists()
+          && request.resource.data.role == 'super_admin'
+          && request.resource.data.status == 'active'
+        )
+      );
       allow update: if isSignedIn() && (
         (request.auth.uid == userId
           && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'status']))
@@ -82,7 +99,9 @@ service cloud.firestore {
     // ── Folders ────────────────────────────────────────────
     match /folders/{folderId} {
       allow read: if isWorkspaceMember(resource.data.workspaceId) || isSuperAdmin();
-      allow write: if isWorkspaceMember(resource.data.workspaceId) || isSuperAdmin();
+      allow create: if isActiveUser()
+        && isWorkspaceMember(request.resource.data.workspaceId);
+      allow update, delete: if isWorkspaceMember(resource.data.workspaceId) || isSuperAdmin();
     }
 
     // ── Comments ───────────────────────────────────────────
@@ -114,10 +133,14 @@ service cloud.firestore {
         request.auth.uid in resource.data.participants
         || userRole() in ['super_admin', 'admin', 'senior']
       );
-      allow write: if isSignedIn() && (
+      allow create: if isSignedIn()
+        && userRole() in ['super_admin', 'admin', 'senior'];
+      allow update: if isSignedIn() && (
         userRole() in ['super_admin', 'admin', 'senior']
         || request.auth.uid in resource.data.assigneeIds
       );
+      allow delete: if isSignedIn()
+        && userRole() in ['super_admin', 'admin', 'senior'];
     }
 
     match /taskComments/{id} {

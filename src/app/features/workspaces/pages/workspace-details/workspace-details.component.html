@@ -1,808 +1,332 @@
-<div class="workspace-details" *ngIf="workspace">
+<div class="ws-page" *ngIf="workspace">
 
-  <!-- =========================
-     WORKSPACE HERO
-========================= -->
-
-  <div class="workspace-hero">
-
-    <div class="hero-top">
-
-      <button class="back-btn" routerLink="/workspaces">
-
-        ← Back to Workspaces
-
+  <!-- Hero -->
+  <section class="ws-hero">
+    <div class="ws-hero-top">
+      <button class="back-link" routerLink="/workspaces">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Workspaces
       </button>
-
-      <div class="breadcrumb">
-
-        Dashboard
-        <span>›</span>
-        Workspaces
-        <span>›</span>
-        {{ workspace.name }}
-
-      </div>
-
+      <nav class="breadcrumb">
+        <span>Dashboard</span>
+        <mat-icon>chevron_right</mat-icon>
+        <span>Workspaces</span>
+        <mat-icon>chevron_right</mat-icon>
+        <span class="current">{{ workspace.name }}</span>
+      </nav>
     </div>
 
-    <div class="hero-content">
-
-      <div class="workspace-avatar">
-
-        {{ workspace.name.charAt(0) }}
-
+    <div class="ws-hero-body">
+      <div class="ws-avatar" [style.background]="getAvatarColor(workspace.name)">
+        {{ workspace.name.charAt(0).toUpperCase() }}
       </div>
 
-      <div class="workspace-info">
-
-        <h1>
-
-          {{ workspace.name }}
-
-        </h1>
-
-        <p>
-
-          {{ workspace.description }}
-
-        </p>
-
-        <div class="workspace-meta">
-
-          <span>
-            👥 {{ workspace.members.length }} Members
-          </span>
-
-          <span>
-            📝 {{ notes.length }} Notes
-          </span>
-
-          <span>
-            🛡 {{ workspace.admins.length }} Admins
-          </span>
-
-          <span>
-            📊 {{ activities.length }} Activities
-          </span>
-
+      <div class="ws-hero-info">
+        <h1>{{ workspace.name }}</h1>
+        <p>{{ workspace.description || 'No description provided.' }}</p>
+        <div class="ws-meta-pills">
+          <span><mat-icon>group</mat-icon>{{ workspace.members.length }} members</span>
+          <span><mat-icon>description</mat-icon>{{ notes.length }} notes</span>
+          <span><mat-icon>folder</mat-icon>{{ folders.length }} folders</span>
+          <span><mat-icon>bolt</mat-icon>{{ activities.length }} activities</span>
         </div>
-
       </div>
 
-      <div class="hero-actions">
-
-        <button *ngIf="isAdmin" class="secondary-action" (click)="scrollToInvite()">
-
-          + Invite Member
-
+      <div class="ws-hero-actions">
+        <button *ngIf="isAdmin" class="btn-outline" (click)="scrollToInvite()">
+          <mat-icon>person_add</mat-icon>
+          Invite Member
         </button>
-
-        <button *ngIf="isOwner" class="danger-action" (click)="deleteWorkspace()">
-
+        <button *ngIf="isOwner" class="btn-danger" (click)="deleteWorkspace()">
+          <mat-icon>delete</mat-icon>
           Delete
-
         </button>
-
       </div>
-
     </div>
+  </section>
 
+  <!-- Stats -->
+  <div class="ws-stats">
+    <div class="stat-card">
+      <div class="stat-icon members"><mat-icon>group</mat-icon></div>
+      <div><strong>{{ getMemberCount() }}</strong><span>Members</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon notes"><mat-icon>description</mat-icon></div>
+      <div><strong>{{ notes.length }}</strong><span>Notes</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon folders"><mat-icon>folder</mat-icon></div>
+      <div><strong>{{ folders.length }}</strong><span>Folders</span></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon activity"><mat-icon>bolt</mat-icon></div>
+      <div><strong>{{ activities.length }}</strong><span>Activities</span></div>
+    </div>
   </div>
 
-  <div class="workspace-stats">
-
-    <div class="stat-card members">
-
-      <div class="stat-icon">
-        👥
-      </div>
-
-      <div class="stat-content">
-        <h3>{{ getMemberCount() }}</h3>
-        <p>Members</p>
-      </div>
-
-    </div>
-
-    <div class="stat-card notes">
-
-      <div class="stat-icon">
-        📝
-      </div>
-
-      <div class="stat-content">
-        <h3>{{ notes.length }}</h3>
-        <p>Notes</p>
-      </div>
-
-    </div>
-
-    <div class="stat-card folders">
-
-      <div class="stat-icon">
-        📁
-      </div>
-
-      <div class="stat-content">
-        <h3>{{ folders.length }}</h3>
-        <p>Folders</p>
-      </div>
-
-    </div>
-
-    <div class="stat-card activity">
-
-      <div class="stat-icon">
-        ⚡
-      </div>
-
-      <div class="stat-content">
-        <h3>{{ activities.length }}</h3>
-        <p>Activities</p>
-      </div>
-
-    </div>
-
-  </div>
-
-
-  <!-- =========================
-     WORKSPACE TEAM HUB
-========================= -->
-
-  <div class="members-section">
-
-    <div class="section-header">
-
+  <!-- Team -->
+  <section class="ws-panel">
+    <div class="panel-head">
       <div>
-
-        <h2>Workspace Team</h2>
-
-        <p class="section-subtitle">
-
-          Collaborators working inside this workspace
-
-        </p>
-
+        <h2>Team</h2>
+        <p>Collaborators in this workspace</p>
       </div>
-
-      <button *ngIf="isAdmin" class="invite-member-btn" (click)="scrollToInvite()">
-
-        + Invite Member
-
+      <button *ngIf="isAdmin" class="btn-primary small" (click)="scrollToInvite()">
+        <mat-icon>person_add</mat-icon>
+        Invite
       </button>
-
     </div>
 
-    <div class="members-grid">
-
-      <div class="member-card" *ngFor="let member of members">
-
-        <div class="member-top">
-
-          <div class="member-avatar">
-
+    <div class="team-grid">
+      <div class="team-card" *ngFor="let member of members">
+        <div class="team-card-top">
+          <div class="member-avatar" [style.background]="getAvatarColor(member?.name || '')">
             {{ member?.name?.charAt(0) }}
-
           </div>
-
-          <div class="member-info">
-
-            <h4>
-
-              {{ member?.name }}
-
-            </h4>
-
-            <p>
-
-              {{ member?.email }}
-
-            </p>
-
+          <div>
+            <h4>{{ member?.name }}</h4>
+            <p>{{ member?.email }}</p>
           </div>
-
         </div>
-
-        <div class="member-meta">
-
-          <span class="role-badge">
-
+        <div class="team-card-meta">
+          <span class="role-chip" [class.admin]="getRole(member?.id) === 'Admin'" [class.owner]="getRole(member?.id) === 'Owner'">
             {{ getRole(member?.id) }}
-
           </span>
-
-          <span class="status-badge online">
-
-            ● Active
-
-          </span>
-
+          <span class="status-dot">Active</span>
         </div>
-
-        <div class="member-actions" *ngIf="
-            isOwner &&
-            member?.id !== currentUserId
-           ">
-
-          <button *ngIf="
-          getRole(member?.id) === 'Member'
-          " class="admin-btn" (click)="makeAdmin(member.id)">
-
-            Promote
-
-          </button>
-
-          <button *ngIf="
-          getRole(member?.id) === 'Admin'
-          " class="remove-admin-btn" (click)="removeAdmin(member.id)">
-
-            Demote
-
-          </button>
-
-          <button class="remove-btn" (click)="removeMember(member.id)">
-
-            Remove
-
-          </button>
-
+        <div class="team-card-actions" *ngIf="isOwner && member?.id !== currentUserId">
+          <button *ngIf="getRole(member?.id) === 'Member'" class="btn-text" (click)="makeAdmin(member.id)">Promote</button>
+          <button *ngIf="getRole(member?.id) === 'Admin'" class="btn-text" (click)="removeAdmin(member.id)">Demote</button>
+          <button class="btn-text danger" (click)="removeMember(member.id)">Remove</button>
         </div>
-
       </div>
-
     </div>
+  </section>
 
-  </div>
-
-  <!-- =========================
-     INVITE PANEL
-========================= -->
-
-  <div class="invite-section" id="invite-section" *ngIf="isAdmin">
-
-    <div class="invite-header">
-
+  <!-- Invite -->
+  <section class="ws-panel invite-panel" id="invite-section" *ngIf="isAdmin">
+    <div class="panel-head">
       <div>
-
-        <h2>
-
-          Invite Collaborators
-
-        </h2>
-
-        <p>
-
-          Add new members to this workspace
-
-        </p>
-
+        <h2>Invite Collaborators</h2>
+        <p>Add members by email address</p>
       </div>
-
     </div>
-
-    <div class="invite-box">
-
-      <input type="email" placeholder="Enter member email" [(ngModel)]="inviteEmail">
-
-      <button (click)="inviteMember()">
-
-        Send Invitation
-
-      </button>
-
+    <div class="invite-row">
+      <mat-icon>email</mat-icon>
+      <input type="email" placeholder="colleague@company.com" [(ngModel)]="inviteEmail">
+      <button class="btn-primary" (click)="inviteMember()">Send Invitation</button>
     </div>
+  </section>
 
-  </div>
-
-  <!-- =========================
-     WORKSPACE NAVIGATION
-========================= -->
-
-  <div class="folders-section">
-
-    <div class="folders-header">
-
+  <!-- Folders -->
+  <section class="ws-panel">
+    <div class="panel-head">
       <div>
-
-        <h2>
-
-          Workspace Structure
-
-        </h2>
-
-        <p>
-
-          Organize notes into folders
-
-        </p>
-
+        <h2>Folders</h2>
+        <p>Organize notes by topic or project</p>
       </div>
+      <button *ngIf="isAdmin" class="btn-outline small" (click)="openCreateFolderModal()">
+        <mat-icon>create_new_folder</mat-icon>
+        New Folder
+      </button>
+    </div>
 
-      <button *ngIf="isAdmin" class="create-folder-btn" (click)="openCreateFolderModal()">
-
-        + Folder
-
+    <div class="folder-grid">
+      <button
+        type="button"
+        class="folder-chip"
+        [class.active]="!selectedFolderId"
+        (click)="selectFolder('')">
+        <mat-icon>library_books</mat-icon>
+        <span class="folder-chip-text">
+          <strong>All Notes</strong>
+          <small>{{ notes.length }} notes</small>
+        </span>
       </button>
 
-    </div>
-
-    <div class="folder-list">
-
-      <!-- ALL NOTES -->
-
-      <div class="folder-card all-folder" [class.active]="!selectedFolderId" (click)="selectFolder('')">
-
-        <div class="folder-info">
-
-          <span class="folder-icon">
-
-            📚
-
+      <div
+        class="folder-chip-wrap"
+        *ngFor="let folder of folders"
+        [class.active]="selectedFolderId === folder.id">
+        <button type="button" class="folder-chip" (click)="selectFolder(folder.id!)">
+          <mat-icon>folder</mat-icon>
+          <span class="folder-chip-text">
+            <strong>{{ folder.name }}</strong>
+            <small>{{ getFolderNoteCount(folder.id!) }} notes</small>
           </span>
-
-          <div>
-
-            <strong>
-
-              All Notes
-
-            </strong>
-
-            <small>
-
-              {{ notes.length }} notes
-
-            </small>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <!-- FOLDERS -->
-
-      <div *ngFor="let folder of folders" class="folder-card" [class.active]="selectedFolderId === folder.id"
-        (click)="selectFolder(folder.id!)">
-
-        <div class="folder-info">
-
-          <span class="folder-icon">
-
-            📁
-
-          </span>
-
-          <div>
-
-            <strong>
-
-              {{ folder.name }}
-
-            </strong>
-
-            <small class="folder-count">
-
-              {{ getFolderNoteCount(folder.id!) }} notes
-
-
-            </small>
-
-          </div>
-
-        </div>
-
-        <div class="folder-actions" *ngIf="isAdmin">
-
-          <button class="rename-btn" (click)="openRenameFolderModal(folder, $event)">
-
-            ✏️
-
+        </button>
+        <div class="folder-chip-actions" *ngIf="isAdmin">
+          <button type="button" (click)="openRenameFolderModal(folder, $event)" title="Rename">
+            <mat-icon>edit</mat-icon>
           </button>
-
-          <button class="delete-folder-btn" (click)="deleteFolder(folder);
-          $event.stopPropagation()">
-
-            🗑️
-
+          <button type="button" (click)="deleteFolder(folder); $event.stopPropagation()" title="Delete">
+            <mat-icon>delete</mat-icon>
           </button>
-
         </div>
-
       </div>
-
     </div>
+  </section>
 
-  </div>
-
-  <div class="notes-toolbar">
-
-    <div class="toolbar-left">
-
-      <h2>
-        Workspace Notes
-      </h2>
-
-      <p>
-        Create, organize and collaborate on notes
-      </p>
-
-    </div>
-
-    <div class="toolbar-right">
-
-      <button class="new-note-btn" (click)="showCreateNoteModal = true">
-
-        + Create Note
-
+  <!-- Notes -->
+  <section class="ws-panel notes-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Notes</h2>
+        <p>{{ filteredNotes.length }} note{{ filteredNotes.length !== 1 ? 's' : '' }} in this workspace</p>
+      </div>
+      <button class="btn-primary" (click)="showCreateNoteModal = true">
+        <mat-icon>add</mat-icon>
+        Create Note
       </button>
-
     </div>
 
-  </div>
-
-  <!-- =========================
-     NOTES SECTION
-========================= -->
-
-  <div class="workspace-notes-section">
-
-    <div class="notes-header">
-
-      <div class="notes-title">
-        <h2>Workspace Notes</h2>
-        <span>{{ filteredNotes.length }} Notes</span>
+    <div class="notes-filters">
+      <div class="search-field">
+        <mat-icon>search</mat-icon>
+        <input type="text" placeholder="Search notes..." [(ngModel)]="searchTerm">
       </div>
-
-      <div class="notes-controls">
-
-        <input type="text" placeholder="🔍 Search notes..." [(ngModel)]="searchTerm">
-
-        <select [(ngModel)]="selectedCategoryFilter">
-
-          <option value="">
-            All Categories
-          </option>
-
-          <option *ngFor="let item of categories" [value]="item">
-
-            {{ item }}
-
-          </option>
-
-        </select>
-
-        <label class="star-toggle">
-
-          <input type="checkbox" [(ngModel)]="showStarredOnly">
-
-          ⭐ Starred
-
-        </label>
-
-      </div>
-
+      <select [(ngModel)]="selectedCategoryFilter">
+        <option value="">All categories</option>
+        <option *ngFor="let item of categories" [value]="item">{{ item }}</option>
+      </select>
+      <label class="check-filter">
+        <input type="checkbox" [(ngModel)]="showStarredOnly">
+        <mat-icon>star</mat-icon>
+        Starred only
+      </label>
     </div>
 
-    <div class="empty-state" *ngIf="filteredNotes.length === 0">
-
-      No notes found.
-
+    <div class="empty-notes" *ngIf="filteredNotes.length === 0">
+      <mat-icon>note_add</mat-icon>
+      <h3>No notes found</h3>
+      <p>Create a note or adjust your filters.</p>
+      <button class="btn-primary" (click)="showCreateNoteModal = true">Create Note</button>
     </div>
 
     <div class="notes-grid" *ngIf="filteredNotes.length > 0">
-
-      <div class="note-card" *ngFor="let note of filteredNotes">
-
-        <!-- HEADER -->
-
-        <div class="note-top">
-
-          <div class="note-main">
-
-            <div class="note-title-row">
-
-              <h3 class="note-title-link" (click)="openNote(note)">
-
-                {{ note.title }}
-
-              </h3>
-
-              <span *ngIf="note.isPinned" class="pinned-badge">
-
-                📌 Pinned
-
+      <article class="note-card" *ngFor="let note of filteredNotes">
+        <div class="note-card-head">
+          <div>
+            <h3 (click)="openNote(note)">{{ note.title || 'Untitled' }}</h3>
+            <div class="note-tags">
+              <span class="tag category">{{ note.category }}</span>
+              <span class="tag priority" [class]="note.priority?.toLowerCase()">{{ note.priority }}</span>
+              <span class="tag folder" *ngIf="note.folderId">
+                <mat-icon>folder</mat-icon>{{ getFolderName(note.folderId) }}
               </span>
-
+              <span class="tag pinned" *ngIf="note.isPinned">
+                <mat-icon>push_pin</mat-icon>Pinned
+              </span>
             </div>
-
-            <div class="note-meta-row">
-
-              <span class="category">
-
-                {{ note.category }}
-
-              </span>
-
-              <span class="folder-badge" *ngIf="note.folderId">
-
-                📁 {{ getFolderName(note.folderId) }}
-
-              </span>
-
-            </div>
-
           </div>
-
-          <button class="star-btn" (click)="toggleStar(note)">
-
-            <span *ngIf="note.starredBy?.length">
-              ⭐
-            </span>
-
-            <span *ngIf="!note.starredBy?.length">
-              ☆
-            </span>
-
+          <button type="button" class="star-toggle" (click)="toggleStar(note)">
+            <mat-icon>{{ note.starredBy?.length ? 'star' : 'star_border' }}</mat-icon>
           </button>
-
         </div>
 
-        <!-- CONTENT -->
+        <p class="note-preview">{{ stripHtml(note.content) }}</p>
 
-        <p class="note-content">
-
-          {{ note.content }}
-
-        </p>
-
-        <!-- STATS -->
-
-        <div class="note-stats">
-
-          <span>
-
-            💬 {{ (comments[note.id!] || []).length }}
-
-          </span>
-
-          <span>
-
-            ⚡ {{ note.priority }}
-
-          </span>
-
-          <span>
-
-            🕒 {{ note.updatedAt | date:'short' }}
-
-          </span>
-
+        <div class="note-meta">
+          <span><mat-icon>chat_bubble_outline</mat-icon>{{ (comments[note.id!] || []).length }}</span>
+          <span><mat-icon>schedule</mat-icon>{{ note.updatedAt | date:'mediumDate' }}</span>
         </div>
 
-        <!-- COMMENTS -->
-
-        <div class="comments-section">
-
-          <div class="comments-header">
-
-            <span>
-              Comments
-            </span>
-
-            <span>
-
-              {{ (comments[note.id!] || []).length }}
-
-            </span>
-
+        <div class="note-comments" *ngIf="comments[note.id!]?.length">
+          <div class="mini-comment" *ngFor="let comment of (comments[note.id!] | slice:0:2)">
+            <strong>{{ comment.userName }}</strong>
+            <span>{{ comment.message }}</span>
           </div>
-
-          <div class="comment-list" *ngIf="comments[note.id!]?.length">
-
-            <div class="comment-item" *ngFor="let comment of comments[note.id!]">
-
-              <div class="comment-top">
-
-                <strong>
-
-                  {{ comment.userName }}
-
-                </strong>
-
-                <span>
-
-                  {{ comment.createdAt | date:'short' }}
-
-                </span>
-
-              </div>
-
-              <div class="comment-message">
-
-                {{ comment.message }}
-
-              </div>
-
-              <button *ngIf="comment.userId === currentUserId" class="delete-comment-btn"
-                (click)="deleteComment(comment.id)">
-
-                Delete
-
-              </button>
-
-            </div>
-
-          </div>
-
-          <div class="comment-form">
-
-            <input type="text" placeholder="Write a comment..." [(ngModel)]="commentInputs[note.id!]"
-              (keyup.enter)="addComment(note)">
-
-            <button (click)="addComment(note)">
-
-              Post
-
-            </button>
-
-          </div>
-
         </div>
 
-        <!-- ACTIONS -->
+        <div class="note-comment-form">
+          <input
+            type="text"
+            placeholder="Add a comment..."
+            [(ngModel)]="commentInputs[note.id!]"
+            (keyup.enter)="addComment(note)">
+          <button type="button" (click)="addComment(note)">Post</button>
+        </div>
 
         <div class="note-actions">
-
-          <button class="history-btn" (click)="showVersions(note)">
-
-            📜 History
-
+          <button type="button" (click)="showVersions(note)"><mat-icon>history</mat-icon>History</button>
+          <button type="button" (click)="editNote(note)"><mat-icon>edit</mat-icon>Edit</button>
+          <button type="button" (click)="togglePin(note)">
+            <mat-icon>push_pin</mat-icon>{{ note.isPinned ? 'Unpin' : 'Pin' }}
           </button>
-
-          <button class="edit-btn" (click)="editNote(note)">
-
-            ✏️ Edit
-
+          <button type="button" class="danger" *ngIf="isOwner" (click)="deleteNote(note.id, note.title)">
+            <mat-icon>delete</mat-icon>Delete
           </button>
-
-          <button class="pin-btn" (click)="togglePin(note)">
-
-            {{ note.isPinned ? '📌 Unpin' : '📍 Pin' }}
-
-          </button>
-
-          <button *ngIf="isOwner" class="delete-btn" (click)="deleteNote(note.id, note.title)">
-
-            🗑 Delete
-
-          </button>
-
         </div>
-
-      </div>
-
+      </article>
     </div>
+  </section>
 
-  </div>
-
-  <div class="version-history-section" *ngIf="selectedVersionNote">
-
-    <div class="version-header">
-
+  <!-- Version history -->
+  <section class="ws-panel" *ngIf="selectedVersionNote">
+    <div class="panel-head">
       <div>
-
-        <h2>
-          Version History
-        </h2>
-
-        <p>
-          {{ selectedVersionNote.title }}
-        </p>
-
+        <h2>Version History</h2>
+        <p>{{ selectedVersionNote.title }}</p>
       </div>
-
-      <button class="close-history-btn" (click)="selectedVersionNote = null">
-        ✕
+      <button class="btn-icon" (click)="selectedVersionNote = null">
+        <mat-icon>close</mat-icon>
       </button>
-
     </div>
 
-    <div class="empty-state" *ngIf="selectedVersions.length === 0">
-      No previous versions found
+    <div class="empty-notes compact" *ngIf="selectedVersions.length === 0">
+      <p>No previous versions found.</p>
     </div>
 
-    <div class="timeline">
-
-      <div class="timeline-item" *ngFor="let version of selectedVersions">
-
-        <div class="timeline-dot"></div>
-
-        <div class="timeline-card">
-
-          <div class="timeline-date">
-
-            {{ version.createdAt | date:'medium' }}
-
-          </div>
-
-          <h4>
-
-            {{ version.title }}
-
-          </h4>
-
-          <p>
-
-            {{ version.content }}
-
-          </p>
-
+    <div class="version-timeline" *ngIf="selectedVersions.length > 0">
+      <div class="version-item" *ngFor="let version of selectedVersions">
+        <div class="version-dot"></div>
+        <div class="version-body">
+          <time>{{ version.createdAt | date:'medium' }}</time>
+          <h4>{{ version.title }}</h4>
+          <p>{{ stripHtml(version.content) }}</p>
         </div>
-
       </div>
-
     </div>
+  </section>
 
-  </div>
-
-  <!-- =========================
-        ACTIVITY HISTORY
-    ========================== -->
-
-  <div class="activity-section">
-
-    <div class="section-header">
-
-      <h2>
-        Recent Activity
-      </h2>
-
-    </div>
-
-    <div class="empty-state" *ngIf="activities.length === 0">
-
-      No activity yet.
-
-    </div>
-
-    <div class="activity-list" *ngIf="activities.length > 0">
-
-      <div class="activity-card" *ngFor="let activity of activities">
-
-        <div class="activity-message">
-
-          {{ activity.message }}
-
-        </div>
-
-        <div class="activity-date">
-
-          {{ activity.createdAt | date:'medium' }}
-
-        </div>
-
+  <!-- Activity -->
+  <section class="ws-panel">
+    <div class="panel-head">
+      <div>
+        <h2>Recent Activity</h2>
+        <p>Latest updates in this workspace</p>
       </div>
-
     </div>
 
+    <div class="empty-notes compact" *ngIf="activities.length === 0">
+      <p>No activity yet.</p>
+    </div>
 
-  </div>
+    <div class="activity-feed" *ngIf="activities.length > 0">
+      <div class="activity-item" *ngFor="let activity of activities">
+        <div class="activity-icon"><mat-icon>notifications</mat-icon></div>
+        <div>
+          <p>{{ activity.message }}</p>
+          <time>{{ activity.createdAt | date:'medium' }}</time>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <!-- CREATE NOTE MODAL -->
-
+  <!-- Create note modal -->
   <div class="modal-overlay" *ngIf="showCreateNoteModal" (click)="closeCreateNoteModal()">
     <div class="modal-card" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>Create Note</h2>
-        <button type="button" class="modal-close" (click)="closeCreateNoteModal()">✕</button>
+        <button type="button" class="btn-icon" (click)="closeCreateNoteModal()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
       <div class="modal-body">
         <input type="text" placeholder="Note title" [(ngModel)]="title">
         <textarea placeholder="Note content" rows="6" [(ngModel)]="content"></textarea>
-        <div class="modal-meta">
+        <div class="modal-row">
           <select [(ngModel)]="category">
             <option *ngFor="let item of categories" [value]="item">{{ item }}</option>
           </select>
@@ -818,26 +342,31 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="modal-btn secondary" (click)="closeCreateNoteModal()">Cancel</button>
-        <button type="button" class="modal-btn primary" (click)="createNote()">Create Note</button>
+        <button type="button" class="btn-outline" (click)="closeCreateNoteModal()">Cancel</button>
+        <button type="button" class="btn-primary" (click)="createNote()">Create Note</button>
       </div>
     </div>
   </div>
 
-  <!-- FOLDER MODAL -->
-
+  <!-- Folder modal -->
   <div class="modal-overlay" *ngIf="showFolderModal" (click)="closeFolderModal()">
     <div class="modal-card small" (click)="$event.stopPropagation()">
       <div class="modal-header">
         <h2>{{ editingFolder ? 'Rename Folder' : 'New Folder' }}</h2>
-        <button type="button" class="modal-close" (click)="closeFolderModal()">✕</button>
+        <button type="button" class="btn-icon" (click)="closeFolderModal()">
+          <mat-icon>close</mat-icon>
+        </button>
       </div>
       <div class="modal-body">
-        <input type="text" placeholder="Folder name" [(ngModel)]="folderModalName" (keyup.enter)="saveFolderModal()">
+        <input
+          type="text"
+          placeholder="Folder name"
+          [(ngModel)]="folderModalName"
+          (keyup.enter)="saveFolderModal()">
       </div>
       <div class="modal-footer">
-        <button type="button" class="modal-btn secondary" (click)="closeFolderModal()">Cancel</button>
-        <button type="button" class="modal-btn primary" (click)="saveFolderModal()">Save</button>
+        <button type="button" class="btn-outline" (click)="closeFolderModal()">Cancel</button>
+        <button type="button" class="btn-primary" (click)="saveFolderModal()">Save</button>
       </div>
     </div>
   </div>

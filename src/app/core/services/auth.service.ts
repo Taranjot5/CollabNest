@@ -47,51 +47,52 @@ export class AuthService {
     }
 
     const userCredential =
-
       await this.afAuth
         .createUserWithEmailAndPassword(
           email,
           password
         );
 
-    const uid =
-      userCredential.user?.uid;
+    const uid = userCredential.user?.uid;
 
-    if (!uid) return;
+    if (!uid) {
+      return;
+    }
 
-    await this.firestore
-      .collection('users')
-      .doc(uid)
-      .set({
+    const now = Date.now();
 
+    const batch = this.firestore.firestore.batch();
 
-        uid,
+    const userRef = this.firestore.collection('users').doc(uid).ref;
 
-        name,
+    batch.set(userRef, {
+      uid,
+      name,
+      email,
+      bio: '',
+      department: '',
+      designation: '',
+      role: 'super_admin',
+      status: 'active',
+      workspaceIds: [],
+      createdAt: now,
+      updatedAt: now
+    });
 
-        email,
+    const bootstrapRef = this.firestore.collection('system').doc('bootstrap').ref;
 
-        bio: '',
+    batch.set(bootstrapRef, {
+      initialized: true,
+      superAdminUid: uid,
+      createdAt: now
+    });
 
-        department: '',
-
-        designation: '',
-
-        role: 'super_admin',
-
-        status: 'active',
-
-        workspaceIds: [],
-
-        createdAt:
-          Date.now(),
-
-        updatedAt:
-          Date.now()
-
-
-      });
-
+    try {
+      await batch.commit();
+    } catch (err) {
+      await userCredential.user?.delete();
+      throw err;
+    }
 
     return userCredential;
   }

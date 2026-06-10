@@ -44,17 +44,17 @@ export class TaskPermissionService {
     return task.assigneeIds.includes(user.uid);
   }
 
+  isTaskAssignee(user: AppUser, task: Task): boolean {
+    return task.assigneeIds.includes(user.uid);
+  }
+
   canUpdateProgress(user: AppUser, task: Task): boolean {
 
     if (this.rolePermission.canManageTasks(user)) {
       return true;
     }
 
-    if (!this.rolePermission.isEditor(user)) {
-      return false;
-    }
-
-    return task.assigneeIds.includes(user.uid)
+    return this.isTaskAssignee(user, task)
       && task.status !== 'completed';
   }
 
@@ -64,7 +64,11 @@ export class TaskPermissionService {
 
   canSubmitForReview(user: AppUser, task: Task): boolean {
 
-    return this.canUpdateProgress(user, task)
+    if (this.rolePermission.canManageTasks(user)) {
+      return false;
+    }
+
+    return this.isTaskAssignee(user, task)
       && (task.status === 'in_progress' || task.status === 'pending');
   }
 
@@ -79,15 +83,10 @@ export class TaskPermissionService {
 
   canComment(user: AppUser, task: Task): boolean {
 
-    if (this.rolePermission.isViewer(user)) {
-      return false;
-    }
-
     if (this.rolePermission.canManageTasks(user)) {
       return true;
     }
 
-    return this.rolePermission.isEditor(user)
-      && task.assigneeIds.includes(user.uid);
+    return this.isTaskAssignee(user, task);
   }
 }

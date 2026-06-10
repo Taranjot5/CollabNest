@@ -126,6 +126,14 @@ export class WorkspaceDetailsComponent
     'Ideas'
   ];
 
+  private avatarColors = [
+    'linear-gradient(135deg, #7c3aed, #a78bfa)',
+    'linear-gradient(135deg, #2563eb, #60a5fa)',
+    'linear-gradient(135deg, #059669, #34d399)',
+    'linear-gradient(135deg, #d97706, #fbbf24)',
+    'linear-gradient(135deg, #dc2626, #f87171)'
+  ];
+
   constructor(
     private noteVersionService: NoteVersionService,
 
@@ -958,6 +966,17 @@ export class WorkspaceDetailsComponent
 
   getMemberCount(): number {
     return this.workspace?.members?.length ?? 0;
+  }
+
+  getAvatarColor(name: string): string {
+    const index = (name?.charCodeAt(0) || 0) % this.avatarColors.length;
+    return this.avatarColors[index];
+  }
+
+  stripHtml(html: string): string {
+    if (!html) return '';
+    const text = html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    return text.length > 140 ? text.slice(0, 140) + '…' : text;
   }
 
   togglePin(note: Note) {
