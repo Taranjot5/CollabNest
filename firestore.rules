@@ -41,6 +41,20 @@ service cloud.firestore {
           || request.auth.uid in ws.admins);
     }
 
+    function isAdminRole() {
+      return isSignedIn() && userRole() in ['super_admin', 'admin', 'senior'];
+    }
+
+    function canAccessNote(data) {
+      return request.auth.uid in data.participants
+        && (
+          !('workspaceId' in data)
+          || data.workspaceId == ''
+          || data.workspaceId == null
+          || isWorkspaceMember(data.workspaceId)
+        );
+    }
+
     // ── Bootstrap (public read for registration gate) ─────
     match /system/bootstrap {
       allow read: if true;
@@ -84,16 +98,15 @@ service cloud.firestore {
 
     // ── Notes ──────────────────────────────────────────────
     match /notes/{noteId} {
-      allow read: if isSignedIn()
-        && request.auth.uid in resource.data.participants
-        && (resource.data.workspaceId == ''
-          || isWorkspaceMember(resource.data.workspaceId));
+      allow read: if isSignedIn() && canAccessNote(resource.data);
       allow create: if isActiveUser()
-        && request.auth.uid in request.resource.data.participants;
-      allow update, delete: if isSignedIn()
-        && request.auth.uid in resource.data.participants
-        && (resource.data.workspaceId == ''
-          || isWorkspaceMember(resource.data.workspaceId));
+        && request.auth.uid in request.resource.data.participants
+        && (
+          !('workspaceId' in request.resource.data)
+          || request.resource.data.workspaceId == ''
+          || isWorkspaceMember(request.resource.data.workspaceId)
+        );
+      allow update, delete: if isSignedIn() && canAccessNote(resource.data);
     }
 
     // ── Folders ────────────────────────────────────────────
@@ -154,13 +167,16 @@ service cloud.firestore {
 
     // ── Workspace Activities ───────────────────────────────
     match /workspaceActivities/{id} {
-      allow read: if isWorkspaceMember(resource.data.workspaceId) || isSuperAdmin();
+      allow read: if isSignedIn() && (
+        isSuperAdmin()
+        || isWorkspaceMember(resource.data.workspaceId)
+      );
       allow create: if isSignedIn();
     }
 
-    // ── Audit Logs (admin only) ────────────────────────────
+    // ── Audit Logs ─────────────────────────────────────────
     match /auditLogs/{id} {
-      allow read: if isSuperAdmin();
+      allow read: if isAdminRole();
       allow create: if isSignedIn();
     }
   }

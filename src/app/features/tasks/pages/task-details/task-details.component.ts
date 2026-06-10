@@ -176,8 +176,13 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
 
     this.taskService.getTaskComments(this.taskId).pipe(
       takeUntil(this.destroy$)
-    ).subscribe(comments => {
-      this.comments = comments;
+    ).subscribe({
+      next: comments => {
+        this.comments = comments;
+      },
+      error: () => {
+        this.comments = [];
+      }
     });
   }
 
@@ -388,6 +393,10 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
     } finally {
       this.saving = false;
     }
+  }
+
+  get progressNotes(): TaskComment[] {
+    return this.comments.filter(c => c.isWorkUpdate);
   }
 
   getStatusLabel(status: TaskStatus): string {

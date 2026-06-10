@@ -37,7 +37,8 @@
     padding: 8px 14px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-border);
-    background: white;
+    background: var(--color-surface);
+    color: var(--color-text);
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
@@ -47,7 +48,7 @@
 
   .delete-btn {
     color: var(--color-danger);
-    border-color: #fecaca;
+    border-color: var(--badge-danger-bg);
   }
 }
 
@@ -89,10 +90,10 @@
   text-transform: uppercase;
   white-space: nowrap;
 
-  &.pending { background: #f1f5f9; color: #64748b; }
-  &.in_progress { background: #dbeafe; color: #2563eb; }
-  &.under_review { background: #ede9fe; color: #7c3aed; }
-  &.completed { background: #dcfce7; color: #16a34a; }
+  &.pending { background: var(--badge-neutral-bg); color: var(--badge-neutral-text); }
+  &.in_progress { background: var(--badge-info-bg); color: var(--badge-info-text); }
+  &.under_review { background: var(--badge-purple-bg); color: var(--badge-purple-text); }
+  &.completed { background: var(--badge-success-bg); color: var(--badge-success-text); }
 }
 
 .meta-row {
@@ -108,9 +109,9 @@
   font-size: 12px;
   font-weight: 600;
 
-  &.high { background: #fef2f2; color: #dc2626; }
-  &.medium { background: #fff7ed; color: #ea580c; }
-  &.low { background: #f0fdf4; color: #16a34a; }
+  &.high { background: var(--badge-danger-bg); color: var(--badge-danger-text); }
+  &.medium { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
+  &.low { background: var(--badge-success-bg); color: var(--badge-success-text); }
 }
 
 .meta-item {
@@ -121,6 +122,11 @@
   color: var(--color-text-muted);
 
   mat-icon { font-size: 16px; width: 16px; height: 16px; }
+}
+
+.progress-text {
+  font-weight: 600;
+  color: var(--color-primary);
 }
 
 .progress-section {

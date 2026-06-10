@@ -16,6 +16,8 @@ import { UserManagementService } from './user-management.service';
 
 import { RolePermissionService } from './role-permission.service';
 
+import { AuditLogService } from './audit-log.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -26,7 +28,8 @@ export class AuthService {
     private afAuth: AngularFireAuth,
     private firestore: AngularFirestore,
     private userManagement: UserManagementService,
-    private rolePermission: RolePermissionService
+    private rolePermission: RolePermissionService,
+    private auditLog: AuditLogService
   ) { }
 
   // =========================
@@ -94,6 +97,14 @@ export class AuthService {
       throw err;
     }
 
+    await this.auditLog.log(
+      'user.created',
+      'user',
+      uid,
+      `Super Admin "${name}" registered`,
+      { actorName: name }
+    );
+
     return userCredential;
   }
 
@@ -101,16 +112,26 @@ export class AuthService {
   // LOGIN
   // =========================
 
-  login(
+  async login(
     email: string,
     password: string
   ) {
 
-    return this.afAuth
+    const credential = await this.afAuth
       .signInWithEmailAndPassword(
         email,
         password
       );
+
+    await this.auditLog.log(
+      'login',
+      'user',
+      credential.user?.uid || '',
+      `User signed in`,
+      { actorName: credential.user?.email || email }
+    );
+
+    return credential;
   }
 
   // =========================

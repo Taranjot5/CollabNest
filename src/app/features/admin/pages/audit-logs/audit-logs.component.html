@@ -16,6 +16,11 @@
     <p>Loading audit logs...</p>
   </div>
 
+  <div class="error-banner" *ngIf="errorMessage">
+    <mat-icon>error_outline</mat-icon>
+    {{ errorMessage }}
+  </div>
+
   <ng-container *ngIf="!loading">
 
     <div class="filters-panel">

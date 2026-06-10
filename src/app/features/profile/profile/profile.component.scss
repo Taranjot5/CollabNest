@@ -53,15 +53,15 @@
 }
 
 .alert-success {
-  background: #dcfce7;
-  color: #15803d;
-  border: 1px solid #bbf7d0;
+  background: var(--alert-success-bg);
+  color: var(--alert-success-text);
+  border: 1px solid var(--color-border);
 }
 
 .alert-error {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: var(--alert-error-bg);
+  color: var(--alert-error-text);
+  border: 1px solid var(--color-border);
 }
 
 .profile-layout {
@@ -124,15 +124,15 @@
 }
 
 .role-badge {
-  &.super_admin { background: #fef3c7; color: #b45309; }
-  &.admin { background: #ede9fe; color: #7c3aed; }
-  &.editor { background: #dbeafe; color: #2563eb; }
-  &.viewer { background: #f1f5f9; color: #64748b; }
+  &.super_admin { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
+  &.admin { background: var(--badge-purple-bg); color: var(--badge-purple-text); }
+  &.editor { background: var(--badge-info-bg); color: var(--badge-info-text); }
+  &.viewer { background: var(--badge-neutral-bg); color: var(--badge-neutral-text); }
 }
 
 .status-badge {
-  &.active { background: #dcfce7; color: #15803d; }
-  &.inactive { background: #fee2e2; color: #b91c1c; }
+  &.active { background: var(--badge-success-bg); color: var(--badge-success-text); }
+  &.inactive { background: var(--badge-danger-bg); color: var(--badge-danger-text); }
 }
 
 .sidebar-actions {
@@ -167,7 +167,7 @@
 
 .btn-outline {
   border: 1px solid var(--color-border);
-  background: white;
+  background: var(--color-surface);
   color: var(--color-text);
 
   &:hover:not(:disabled) { background: var(--color-bg); }
@@ -278,7 +278,7 @@
 
     &:focus {
       border-color: var(--color-primary);
-      background: white;
+      background: var(--color-surface);
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
     }
 

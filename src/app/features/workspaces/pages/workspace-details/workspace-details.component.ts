@@ -650,12 +650,14 @@ export class WorkspaceDetailsComponent
 
     this.workspaceService
       .getActivities(this.workspaceId)
-      .subscribe(data => {
-
-        this.activities = data;
-
-        this.recentActivities =
-          data.length;
+      .subscribe({
+        next: data => {
+          this.activities = data;
+          this.recentActivities = data.length;
+        },
+        error: () => {
+          this.activities = [];
+        }
       });
   }
 
@@ -673,40 +675,35 @@ export class WorkspaceDetailsComponent
       return;
     }
 
+    const noteTitle = this.title.trim();
+
     try {
 
-      await this.noteService
-        .createNote(
+      await this.noteService.createNote(
+        noteTitle,
+        this.content,
+        this.category,
+        this.priority,
+        this.workspaceId,
+        this.selectedFolderId
+      );
 
-          this.title,
-
-          this.content,
-
-          this.category,
-
-          this.priority,
-
-          this.workspaceId,
-
-          this.selectedFolderId
-        );
+      await this.workspaceService.addActivity(
+        this.workspaceId,
+        'note_created',
+        `Note "${noteTitle}" was created`
+      );
 
       this.title = '';
-
       this.content = '';
-
       this.category = 'Work';
-
       this.priority = 'Medium';
-
+      this.selectedFolderId = '';
       this.showCreateNoteModal = false;
 
     } catch (error) {
 
-      console.error(
-        'Create note failed',
-        error
-      );
+      console.error('Create note failed', error);
     }
 
   }
@@ -788,15 +785,17 @@ export class WorkspaceDetailsComponent
 
     try {
 
-      await this.noteService
-        .deleteNote(id);
+      await this.noteService.deleteNote(id);
+
+      await this.workspaceService.addActivity(
+        this.workspaceId,
+        'note_deleted',
+        `Note "${title || 'Untitled'}" was deleted`
+      );
 
     } catch (error) {
 
-      console.error(
-        'Delete note failed',
-        error
-      );
+      console.error('Delete note failed', error);
     }
 
 

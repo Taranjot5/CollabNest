@@ -134,9 +134,7 @@ export class TaskService {
 
     return this.firestore
       .collection<TaskComment>('taskComments', ref =>
-        ref
-          .where('taskId', '==', taskId)
-          .orderBy('createdAt', 'desc')
+        ref.where('taskId', '==', taskId)
       )
       .snapshotChanges()
       .pipe(
@@ -145,6 +143,9 @@ export class TaskService {
             id: a.payload.doc.id,
             ...(a.payload.doc.data() as TaskComment)
           }))
+        ),
+        map(comments =>
+          comments.sort((a, b) => b.createdAt - a.createdAt)
         )
       );
   }

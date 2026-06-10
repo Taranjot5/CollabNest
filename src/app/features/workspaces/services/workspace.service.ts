@@ -25,6 +25,8 @@ import {
   Workspace
 } from '../models/workspace.model';
 
+import { AuditLogService } from '../../../core/services/audit-log.service';
+
 export interface WorkspaceActivity {
 
   id?: string;
@@ -47,7 +49,8 @@ export class WorkspaceService {
 
   constructor(
     private firestore: AngularFirestore,
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+    private auditLog: AuditLogService
   ) { }
 
   // =========================
@@ -87,12 +90,17 @@ export class WorkspaceService {
         .add(workspace);
 
     await this.addActivity(
-
       docRef.id,
-
       'workspace_created',
-
       `${name} workspace created`
+    );
+
+    await this.auditLog.log(
+      'workspace.created',
+      'workspace',
+      docRef.id,
+      `Workspace "${name}" created`,
+      { workspaceId: docRef.id }
     );
 
     return docRef;
@@ -359,46 +367,22 @@ export class WorkspaceService {
   ): Observable<WorkspaceActivity[]> {
 
     return this.firestore
-
       .collection<WorkspaceActivity>(
         'workspaceActivities',
-
         ref =>
-          ref
-
-            .where(
-              'workspaceId',
-              '==',
-              workspaceId
-            )
-
-            .orderBy(
-              'createdAt',
-              'desc'
-            )
+          ref.where('workspaceId', '==', workspaceId)
       )
-
       .snapshotChanges()
-
       .pipe(
-
         map(actions =>
-
           actions.map(a => {
-
-            const data =
-              a.payload.doc.data() as WorkspaceActivity;
-
-            const id =
-              a.payload.doc.id;
-
+            const data = a.payload.doc.data() as WorkspaceActivity;
+            const id = a.payload.doc.id;
             return {
-
               id,
-
               ...data
             };
-          })
+          }).sort((a, b) => b.createdAt - a.createdAt)
         )
       );
   }

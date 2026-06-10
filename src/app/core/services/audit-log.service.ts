@@ -96,16 +96,17 @@ export class AuditLogService {
   getLogs(limit = 100): Observable<AuditLogEntry[]> {
 
     return this.firestore
-      .collection<AuditLogEntry>('auditLogs', ref =>
-        ref.orderBy('createdAt', 'desc').limit(limit)
-      )
+      .collection<AuditLogEntry>('auditLogs')
       .snapshotChanges()
       .pipe(
         map(actions =>
-          actions.map(a => ({
-            id: a.payload.doc.id,
-            ...(a.payload.doc.data() as AuditLogEntry)
-          }))
+          actions
+            .map(a => ({
+              id: a.payload.doc.id,
+              ...(a.payload.doc.data() as AuditLogEntry)
+            }))
+            .sort((a, b) => b.createdAt - a.createdAt)
+            .slice(0, limit)
         )
       );
   }

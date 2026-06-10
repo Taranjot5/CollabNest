@@ -22,6 +22,8 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
 
   loading = true;
 
+  errorMessage = '';
+
   searchText = '';
 
   actionFilter = 'all';
@@ -34,10 +36,16 @@ export class AuditLogsComponent implements OnInit, OnDestroy {
 
     this.auditLog.getLogs(200).pipe(
       takeUntil(this.destroy$)
-    ).subscribe(logs => {
-      this.logs = logs;
-      this.applyFilters();
-      this.loading = false;
+    ).subscribe({
+      next: logs => {
+        this.logs = logs;
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Unable to load audit logs. Deploy Firestore rules and try again.';
+        this.loading = false;
+      }
     });
   }
 

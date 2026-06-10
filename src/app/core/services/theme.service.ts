@@ -43,8 +43,15 @@ export class ThemeService {
 
   private apply(theme: ThemeMode): void {
 
+    const root = document.documentElement;
+
+    root.classList.remove('theme-light', 'theme-dark');
     document.body.classList.remove('theme-light', 'theme-dark');
+
+    root.classList.add(`theme-${theme}`);
     document.body.classList.add(`theme-${theme}`);
+    root.setAttribute('data-theme', theme);
+
     this.themeSubject.next(theme);
   }
 }

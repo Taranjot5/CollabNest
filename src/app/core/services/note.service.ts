@@ -27,6 +27,8 @@ import { Note } from '../../features/notes/models/note.model';
 
 import { NotificationService } from './notification.service';
 
+import { AuditLogService } from './audit-log.service';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -37,7 +39,8 @@ export class NoteService {
     private noteVersionService: NoteVersionService,
     private firestore: AngularFirestore,
     private afAuth: AngularFireAuth,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private auditLog: AuditLogService
   ) { }
 
   // =========================
@@ -186,16 +189,23 @@ export class NoteService {
 
       trashedAt: 0,
 
-      folderId: folderId || ''
+      folderId: folderId || '',
+      workspaceId: workspaceId || ''
     };
 
-    if (workspaceId) {
-      note.workspaceId = workspaceId;
-    }
-
-    return this.firestore
+    const docRef = await this.firestore
       .collection('notes')
       .add(note);
+
+    await this.auditLog.log(
+      'note.created',
+      'note',
+      docRef.id,
+      `Note "${title}" created`,
+      { workspaceId: workspaceId || '' }
+    );
+
+    return docRef;
   }
 
   // =========================
@@ -225,61 +235,48 @@ export class NoteService {
       await this.afAuth.currentUser;
 
     if (!user) {
-      return;
+      throw new Error('You must be signed in to update notes');
     }
 
-    const snapshot =
-
-
-      await this.firestore
-
-        .collection('notes')
-
-        .doc(id)
-
-        .ref
-
-        .get();
-
+    const snapshot = await this.firestore
+      .collection('notes')
+      .doc(id)
+      .ref
+      .get();
 
     if (!snapshot.exists) {
-      return;
+      throw new Error('Note not found');
     }
 
     const existing =
       snapshot.data() as Note;
 
-    await this
-      .noteVersionService
-      .saveVersion(
-
-
+    try {
+      await this.noteVersionService.saveVersion(
         id,
-
         existing.title,
-
         existing.content,
-
         user.uid
       );
+    } catch {
+      // Version history is optional; do not block note save
+    }
 
-
-    return this.firestore
-
-
+    await this.firestore
       .collection('notes')
-
       .doc(id)
-
       .update({
-
         ...note,
-
-        updatedAt:
-          Date.now()
+        updatedAt: Date.now()
       });
 
-
+    await this.auditLog.log(
+      'note.updated',
+      'note',
+      id,
+      `Note "${note.title || existing.title}" updated`,
+      { workspaceId: existing.workspaceId || '' }
+    );
   }
 
 
@@ -287,17 +284,26 @@ export class NoteService {
   // MOVE NOTE TO TRASH
   // =========================
 
-  deleteNote(id: string) {
+  async deleteNote(id: string) {
 
-    return this.firestore
+    const snapshot = await this.firestore.collection('notes').doc(id).ref.get();
+    const existing = snapshot.data() as Note | undefined;
+
+    await this.firestore
       .collection('notes')
       .doc(id)
       .update({
-
         isTrashed: true,
-
         trashedAt: Date.now()
       });
+
+    await this.auditLog.log(
+      'note.deleted',
+      'note',
+      id,
+      `Note "${existing?.title || 'Untitled'}" moved to trash`,
+      { workspaceId: existing?.workspaceId || '' }
+    );
   }
 
   // =========================

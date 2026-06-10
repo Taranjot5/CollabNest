@@ -325,11 +325,11 @@
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  background: #e2e8f0;
-  color: #475569;
+  background: var(--badge-neutral-bg);
+  color: var(--badge-neutral-text);
 
-  &.admin { background: #dbeafe; color: #1d4ed8; }
-  &.owner { background: #fef3c7; color: #b45309; }
+  &.admin { background: var(--badge-info-bg); color: var(--badge-info-text); }
+  &.owner { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
 }
 
 .status-dot {
@@ -353,14 +353,17 @@
 
 // ── Invite ────────────────────────────────────────────
 
-.invite-panel { border-color: #bfdbfe; background: linear-gradient(180deg, #eff6ff 0%, var(--color-surface) 100%); }
+.invite-panel {
+  border-color: var(--color-primary-light);
+  background: linear-gradient(180deg, var(--color-primary-light) 0%, var(--color-surface) 100%);
+}
 
 .invite-row {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 4px 4px 4px 14px;
-  background: white;
+  background: var(--color-input-bg);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
 
@@ -393,7 +396,7 @@
 
   &.active .folder-chip {
     border-color: var(--color-primary);
-    background: #eff6ff;
+    background: var(--color-primary-light);
     color: var(--color-primary);
   }
 }
@@ -417,7 +420,7 @@
   &:hover { border-color: var(--color-primary); }
   &.active {
     border-color: var(--color-primary);
-    background: #eff6ff;
+    background: var(--color-primary-light);
   }
 }
 
@@ -559,12 +562,12 @@
 
   mat-icon { font-size: 12px; width: 12px; height: 12px; }
 
-  &.category { background: #dbeafe; color: #1d4ed8; }
-  &.priority.high { background: #fee2e2; color: #b91c1c; }
-  &.priority.medium { background: #fef3c7; color: #b45309; }
-  &.priority.low { background: #dcfce7; color: #15803d; }
-  &.folder { background: #f1f5f9; color: #475569; }
-  &.pinned { background: #fce7f3; color: #be185d; }
+  &.category { background: var(--badge-info-bg); color: var(--badge-info-text); }
+  &.priority.high { background: var(--badge-danger-bg); color: var(--badge-danger-text); }
+  &.priority.medium { background: var(--badge-warning-bg); color: var(--badge-warning-text); }
+  &.priority.low { background: var(--badge-success-bg); color: var(--badge-success-text); }
+  &.folder { background: var(--badge-neutral-bg); color: var(--badge-neutral-text); }
+  &.pinned { background: var(--badge-purple-bg); color: var(--badge-purple-text); }
 }
 
 .note-preview {
@@ -768,7 +771,7 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.5);
+  background: var(--overlay-bg);
   display: flex;
   align-items: center;
   justify-content: center;
