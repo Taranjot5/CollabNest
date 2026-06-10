@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { forkJoin } from 'rxjs';
 
@@ -57,6 +57,12 @@ export class WorkspaceDetailsComponent
 
   showCreateNoteModal = false;
 
+  showFolderModal = false;
+
+  folderModalName = '';
+
+  editingFolder: Folder | null = null;
+
   selectedVersions: any[] = [];
 
   selectedVersionNote: Note | null = null;
@@ -78,8 +84,6 @@ export class WorkspaceDetailsComponent
   selectedTagFilter = '';
 
   showStarredOnly = false;
-
-  selectedFolderFilter = '';
 
   folders: Folder[] = [];
 
@@ -139,7 +143,9 @@ export class WorkspaceDetailsComponent
 
     private authService: AuthService,
 
-    private afAuth: AngularFireAuth
+    private afAuth: AngularFireAuth,
+
+    private router: Router
 
   ) { }
 
@@ -201,43 +207,42 @@ export class WorkspaceDetailsComponent
       });
   }
 
-  async createFolder() {
+  openCreateFolderModal(): void {
+    this.editingFolder = null;
+    this.folderModalName = '';
+    this.showFolderModal = true;
+  }
 
-    const name =
-      prompt('Folder Name');
+  openRenameFolderModal(folder: Folder, event?: Event): void {
+    event?.stopPropagation();
+    this.editingFolder = folder;
+    this.folderModalName = folder.name;
+    this.showFolderModal = true;
+  }
+
+  closeFolderModal(): void {
+    this.showFolderModal = false;
+    this.editingFolder = null;
+    this.folderModalName = '';
+  }
+
+  async saveFolderModal(): Promise<void> {
+
+    const name = this.folderModalName.trim();
 
     if (!name) {
       return;
     }
 
-    await this.folderService
-      .createFolder(
-        name,
-        this.workspaceId
-      );
-  }
-
-  async renameFolder(
-    folder: Folder
-  ) {
-
-    const name = prompt(
-      'Rename Folder',
-      folder.name
-    );
-
-    if (
-      !name ||
-      name === folder.name
-    ) {
-      return;
+    if (this.editingFolder) {
+      if (name !== this.editingFolder.name) {
+        await this.folderService.updateFolder(this.editingFolder.id!, name);
+      }
+    } else {
+      await this.folderService.createFolder(name, this.workspaceId);
     }
 
-    await this.folderService
-      .updateFolder(
-        folder.id!,
-        name
-      );
+    this.closeFolderModal();
   }
 
   async deleteFolder(
@@ -259,32 +264,18 @@ export class WorkspaceDetailsComponent
       );
   }
 
-  filterByFolder(
-    folderId?: string
-  ) {
-
-    this.selectedFolderFilter =
-      folderId || '';
+  selectFolder(folderId: string): void {
+    this.selectedFolderId = folderId;
   }
 
   get filteredNotes(): Note[] {
 
     let filtered = [...this.notes];
 
-    // Folder
-
-    if (this.selectedFolderFilter) {
-
-
+    if (this.selectedFolderId) {
       filtered = filtered.filter(
-
-        note =>
-
-          note.folderId ===
-          this.selectedFolderFilter
+        note => note.folderId === this.selectedFolderId
       );
-
-
     }
 
     // Search
@@ -700,7 +691,7 @@ export class WorkspaceDetailsComponent
 
       this.priority = 'Medium';
 
-      this.selectedFolderId = '';
+      this.showCreateNoteModal = false;
 
     } catch (error) {
 
@@ -712,45 +703,37 @@ export class WorkspaceDetailsComponent
 
   }
 
-  async editNote(
-    note: Note
-  ) {
+  openNote(note: Note): void {
 
     if (!note.id) {
       return;
     }
 
-    const title = prompt(
-      'Edit Title',
-      note.title
-    );
+    this.router.navigate(['/notes', note.id]);
+  }
 
-    if (!title) {
+  editNote(note: Note): void {
+
+    if (!note.id) {
       return;
     }
 
-    const content = prompt(
-      'Edit Content',
-      note.content
-    );
+    this.router.navigate(['/notes', note.id, 'edit']);
+  }
 
-    if (!content) {
-      return;
+  scrollToInvite(): void {
+
+    const el = document.getElementById('invite-section');
+
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const input = el.querySelector('input[type="email"]') as HTMLInputElement;
+      input?.focus();
     }
+  }
 
-    await this.noteService
-      .updateNote(
-
-
-        note.id,
-
-        {
-          title,
-          content
-        }
-      );
-
-
+  closeCreateNoteModal(): void {
+    this.showCreateNoteModal = false;
   }
 
   showVersions(
@@ -937,6 +920,8 @@ export class WorkspaceDetailsComponent
         .deleteWorkspace(
           this.workspaceId
         );
+
+      this.router.navigate(['/workspaces']);
 
     } catch (error) {
 

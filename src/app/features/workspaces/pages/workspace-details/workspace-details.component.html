@@ -72,7 +72,7 @@
 
       <div class="hero-actions">
 
-        <button *ngIf="isAdmin" class="secondary-action">
+        <button *ngIf="isAdmin" class="secondary-action" (click)="scrollToInvite()">
 
           + Invite Member
 
@@ -167,7 +167,7 @@
 
       </div>
 
-      <button *ngIf="isAdmin" class="invite-member-btn">
+      <button *ngIf="isAdmin" class="invite-member-btn" (click)="scrollToInvite()">
 
         + Invite Member
 
@@ -260,7 +260,7 @@
      INVITE PANEL
 ========================= -->
 
-  <div class="invite-section" *ngIf="isAdmin">
+  <div class="invite-section" id="invite-section" *ngIf="isAdmin">
 
     <div class="invite-header">
 
@@ -320,7 +320,7 @@
 
       </div>
 
-      <button *ngIf="isAdmin" class="create-folder-btn" (click)="createFolder()">
+      <button *ngIf="isAdmin" class="create-folder-btn" (click)="openCreateFolderModal()">
 
         + Folder
 
@@ -332,7 +332,7 @@
 
       <!-- ALL NOTES -->
 
-      <div class="folder-card all-folder" [class.active]="!selectedFolderId" (click)="selectedFolderId = ''">
+      <div class="folder-card all-folder" [class.active]="!selectedFolderId" (click)="selectFolder('')">
 
         <div class="folder-info">
 
@@ -365,7 +365,7 @@
       <!-- FOLDERS -->
 
       <div *ngFor="let folder of folders" class="folder-card" [class.active]="selectedFolderId === folder.id"
-        (click)="selectedFolderId = (folder.id!)">
+        (click)="selectFolder(folder.id!)">
 
         <div class="folder-info">
 
@@ -396,8 +396,7 @@
 
         <div class="folder-actions" *ngIf="isAdmin">
 
-          <button class="rename-btn" (click)="renameFolder(folder);
-          $event.stopPropagation()">
+          <button class="rename-btn" (click)="openRenameFolderModal(folder, $event)">
 
             ✏️
 
@@ -505,7 +504,7 @@
 
             <div class="note-title-row">
 
-              <h3>
+              <h3 class="note-title-link" (click)="openNote(note)">
 
                 {{ note.title }}
 
@@ -791,4 +790,56 @@
 
 
   </div>
+
+  <!-- CREATE NOTE MODAL -->
+
+  <div class="modal-overlay" *ngIf="showCreateNoteModal" (click)="closeCreateNoteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Create Note</h2>
+        <button type="button" class="modal-close" (click)="closeCreateNoteModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" placeholder="Note title" [(ngModel)]="title">
+        <textarea placeholder="Note content" rows="6" [(ngModel)]="content"></textarea>
+        <div class="modal-meta">
+          <select [(ngModel)]="category">
+            <option *ngFor="let item of categories" [value]="item">{{ item }}</option>
+          </select>
+          <select [(ngModel)]="priority">
+            <option value="High">High</option>
+            <option value="Medium">Medium</option>
+            <option value="Low">Low</option>
+          </select>
+          <select [(ngModel)]="selectedFolderId" *ngIf="folders.length">
+            <option value="">No folder</option>
+            <option *ngFor="let folder of folders" [value]="folder.id">{{ folder.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn secondary" (click)="closeCreateNoteModal()">Cancel</button>
+        <button type="button" class="modal-btn primary" (click)="createNote()">Create Note</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOLDER MODAL -->
+
+  <div class="modal-overlay" *ngIf="showFolderModal" (click)="closeFolderModal()">
+    <div class="modal-card small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ editingFolder ? 'Rename Folder' : 'New Folder' }}</h2>
+        <button type="button" class="modal-close" (click)="closeFolderModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="text" placeholder="Folder name" [(ngModel)]="folderModalName" (keyup.enter)="saveFolderModal()">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="modal-btn secondary" (click)="closeFolderModal()">Cancel</button>
+        <button type="button" class="modal-btn primary" (click)="saveFolderModal()">Save</button>
+      </div>
+    </div>
+  </div>
+
 </div>

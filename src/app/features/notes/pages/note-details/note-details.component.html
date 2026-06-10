@@ -1,16 +1,39 @@
-<div class="note-details" *ngIf="note">
+<div class="note-details-page">
 
-  <input
-    type="text"
-    [(ngModel)]="note.title"
-    placeholder="Note title">
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading note...</p>
+  </div>
 
-  <quill-editor
-    [(ngModel)]="note.content">
-  </quill-editor>
+  <ng-container *ngIf="!loading && note">
 
-  <button (click)="saveNote()">
-    Save
-  </button>
+    <div class="details-header">
+      <button type="button" class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+      <button type="button" class="edit-btn" (click)="editNote()">
+        <mat-icon>edit</mat-icon>
+        Edit Note
+      </button>
+    </div>
+
+    <article class="note-article">
+      <div class="note-meta">
+        <span class="category-badge">{{ note.category }}</span>
+        <span class="priority-badge" [ngClass]="(note.priority || 'medium').toLowerCase()">{{ note.priority || 'Medium' }}</span>
+        <span class="date">{{ note.updatedAt | date:'medium' }}</span>
+      </div>
+
+      <h1>{{ note.title || 'Untitled' }}</h1>
+
+      <div class="tags" *ngIf="note.tags?.length">
+        <span class="tag" *ngFor="let tag of note.tags">#{{ tag }}</span>
+      </div>
+
+      <div class="note-body" [innerHTML]="note.content"></div>
+    </article>
+
+  </ng-container>
 
 </div>

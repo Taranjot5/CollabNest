@@ -22,6 +22,11 @@
         Workspaces
       </a>
 
+      <a class="action-btn secondary" routerLink="/tasks">
+        <mat-icon>task_alt</mat-icon>
+        Tasks
+      </a>
+
       <a class="action-btn secondary" routerLink="/search">
         <mat-icon>search</mat-icon>
         Search
@@ -74,6 +79,16 @@
         </div>
       </a>
 
+      <a class="stat-card" routerLink="/tasks">
+        <div class="stat-icon tasks">
+          <mat-icon>task_alt</mat-icon>
+        </div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.tasks }}</span>
+          <span class="stat-label">Tasks</span>
+        </div>
+      </a>
+
       <a class="stat-card" routerLink="/notifications">
         <div class="stat-icon notifications">
           <mat-icon>notifications</mat-icon>
@@ -115,6 +130,12 @@
         <mat-icon>delete</mat-icon>
         <span>Trash</span>
         <span class="badge muted" *ngIf="stats.trashNotes">{{ stats.trashNotes }}</span>
+      </a>
+
+      <a routerLink="/tasks" class="quick-link">
+        <mat-icon>task_alt</mat-icon>
+        <span>Tasks</span>
+        <span class="badge" *ngIf="stats.tasks">{{ stats.tasks }}</span>
       </a>
 
       <a routerLink="/profile" class="quick-link">

@@ -1,9 +1,134 @@
-input,
-textarea {
-  width: 100%;
-  margin-bottom: 20px;
+.note-details-page {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
-textarea {
-  min-height: 300px;
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 60px;
+  color: var(--color-text-muted);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.back-btn, .edit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+.back-btn {
+  border: none;
+  background: transparent;
+  color: var(--color-text-muted);
+
+  &:hover { color: var(--color-primary); }
+}
+
+.edit-btn {
+  border: none;
+  background: var(--color-primary);
+  color: white;
+
+  &:hover { background: var(--color-primary-dark); }
+}
+
+.note-article {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+}
+
+.note-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.category-badge {
+  padding: 4px 12px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.priority-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.high { background: #fee2e2; color: #b91c1c; }
+  &.medium { background: #fef3c7; color: #b45309; }
+  &.low { background: #dcfce7; color: #15803d; }
+}
+
+.date {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin-left: auto;
+}
+
+h1 {
+  margin: 0 0 16px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.tag {
+  padding: 4px 10px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.note-body {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-text);
+
+  :deep(p) { margin: 0 0 1em; }
+  :deep(h1), :deep(h2), :deep(h3) { margin: 1.2em 0 0.5em; }
 }

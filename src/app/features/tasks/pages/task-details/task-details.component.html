@@ -107,7 +107,36 @@
 
     <div class="side-panels">
 
-      <!-- JUNIOR: PROGRESS UPDATE -->
+      <!-- ADMIN: SET PROGRESS -->
+
+      <div class="panel progress-panel admin-progress" *ngIf="canManageTasks && canSetProgress">
+
+        <h2>
+          <mat-icon>admin_panel_settings</mat-icon>
+          Manage Progress
+        </h2>
+
+        <p class="panel-hint">Update task status and progress on behalf of assignees.</p>
+
+        <div class="form-group">
+          <label>Status</label>
+          <select [(ngModel)]="progressStatus">
+            <option *ngFor="let opt of statusOptions" [value]="opt.value">{{ opt.label }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Progress: {{ progressPercent }}%</label>
+          <input type="range" min="0" max="100" [(ngModel)]="progressPercent">
+        </div>
+
+        <button class="panel-btn primary" (click)="saveProgress()" [disabled]="saving">
+          Save Progress
+        </button>
+
+      </div>
+
+      <!-- ASSIGNEE: PROGRESS UPDATE -->
 
       <div class="panel progress-panel" *ngIf="canUpdateProgress && task.status !== 'under_review'">
 

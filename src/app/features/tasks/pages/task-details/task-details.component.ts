@@ -52,6 +52,8 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
 
   canUpdateProgress = false;
 
+  canSetProgress = false;
+
   canReview = false;
 
   canComment = false;
@@ -138,9 +140,11 @@ export class TaskDetailsComponent implements OnInit, OnDestroy {
       this.task = task;
       this.progressPercent = task.progressPercent;
       this.progressStatus = task.status;
-      this.canUpdateProgress = this.userProfile
-        ? this.permissionService.canUpdateProgress(this.userProfile, task)
+      this.canSetProgress = this.userProfile
+        ? this.permissionService.canSetTaskProgress(this.userProfile, task)
         : false;
+      this.canUpdateProgress = this.canSetProgress
+        && !this.canManageTasks;
       this.canReview = this.userProfile
         ? this.permissionService.canReviewTask(this.userProfile, task)
         : false;

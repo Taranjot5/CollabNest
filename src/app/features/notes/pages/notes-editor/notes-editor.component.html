@@ -1,2 +1,68 @@
-<h2>Note Editor</h2>
-<textarea rows="10" cols="50"></textarea>
+<div class="note-editor-page">
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Loading note...</p>
+  </div>
+
+  <ng-container *ngIf="!loading">
+
+    <div class="editor-header">
+      <button type="button" class="back-btn" (click)="cancel()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+      <div class="header-actions">
+        <button type="button" class="btn-outline" (click)="cancel()">Cancel</button>
+        <button type="button" class="btn-primary" (click)="save()" [disabled]="saving">
+          <mat-icon>save</mat-icon>
+          {{ saving ? 'Saving...' : (isEdit ? 'Save Changes' : 'Create Note') }}
+        </button>
+      </div>
+    </div>
+
+    <div class="alert success" *ngIf="successMessage">
+      <mat-icon>check_circle</mat-icon>
+      {{ successMessage }}
+    </div>
+
+    <div class="alert error" *ngIf="errorMessage">
+      <mat-icon>error_outline</mat-icon>
+      {{ errorMessage }}
+    </div>
+
+    <div class="editor-card">
+      <input
+        type="text"
+        class="title-input"
+        [(ngModel)]="title"
+        placeholder="Note title">
+
+      <div class="meta-row">
+        <div class="field">
+          <label>Category</label>
+          <select [(ngModel)]="category">
+            <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Priority</label>
+          <select [(ngModel)]="priority">
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="field grow">
+          <label>Tags</label>
+          <input type="text" [(ngModel)]="tagsInput" placeholder="e.g. meeting, urgent">
+        </div>
+      </div>
+
+      <div class="editor-wrap">
+        <label>Content</label>
+        <quill-editor [(ngModel)]="content" [styles]="{ minHeight: '320px' }"></quill-editor>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -46,12 +46,20 @@ export class TaskPermissionService {
 
   canUpdateProgress(user: AppUser, task: Task): boolean {
 
+    if (this.rolePermission.canManageTasks(user)) {
+      return true;
+    }
+
     if (!this.rolePermission.isEditor(user)) {
       return false;
     }
 
     return task.assigneeIds.includes(user.uid)
       && task.status !== 'completed';
+  }
+
+  canSetTaskProgress(user: AppUser, task: Task): boolean {
+    return this.canUpdateProgress(user, task);
   }
 
   canSubmitForReview(user: AppUser, task: Task): boolean {

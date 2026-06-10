@@ -317,7 +317,7 @@ export class TaskService {
 
     const task = await this.getTaskSnapshot(taskId);
 
-    if (!task || !this.permissionService.canUpdateProgress(user, task)) {
+    if (!task || !this.permissionService.canSetTaskProgress(user, task)) {
       throw new Error('You cannot update this task');
     }
 
